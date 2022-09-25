@@ -5,7 +5,7 @@ function App() {
   const [text, setText] = React.useState(null);
   
   React.useEffect(() => {
-    fetch('http://localhost:8000/')
+    fetch('/api')
       .then(results => results.text())
       .then(text => {
         setText(text);
