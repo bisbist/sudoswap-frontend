@@ -13,7 +13,13 @@ app.get('/', (req, res) => {
 })
 
 app.get("/pairs", async (req, res) => {
-  res.json(await db.getAll());
+  res.json(await db.getAll() || []);
+})
+
+app.get("/pair", async (req, res) => {
+  const pairAddr = req.query.id
+  const pairs = await db.getAll()
+  res.json(pairs.find(pair => pair.pair == pairAddr) || null)
 })
 
 await (async () => {
