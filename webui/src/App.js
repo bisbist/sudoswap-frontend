@@ -1,36 +1,30 @@
-import './App.css';
-import WalletCardEthers from './WalletCardEthers';
-// import Navbar from './components/NavBar';
-import Swap from './pages/swap'
-import Pools from './pages/pools'
-import { 
-  BrowserRouter, 
-  Routes, 
+import React from 'react';
+import {
+  BrowserRouter,
+  Routes,
   Route,
   Link,
 } from 'react-router-dom';
-// import { Nav } from 'react-bootstrap';
+import Swap from './pages/swap'
+import Pools from './pages/pools'
 
-const Home = () => <div/>
+const Home = () => <div />
 
 function App() {
-  //const [text, setText] = React.useState(null);
-  
-  // React.useEffect(() => {
-  //   fetch('/api')
-  //     .then(results => results.text())
-  //     .then(text => {
-  //       setText(text);
-  //     });
-  // }, []);
 
   return (
-    <div className="App">
+    <div>
 
       <BrowserRouter>
 
-        <Link to='/swap'>Swap</Link>
-        <Link to='/pools'>Pools</Link>
+        <div style={{ textAlign: 'center' }}>
+          <Link to='/swap'>
+            <button style={{ margin: 5, padding: 5 }}>Swap</button>
+          </Link>
+          <Link to='/pools'>
+            <button style={{ margin: 5, padding: 5 }}>Pools</button>
+          </Link>
+        </div>
 
         <Routes>
           <Route path='/swap' element={<Swap />} />
