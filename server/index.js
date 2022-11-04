@@ -30,7 +30,7 @@ await (async () => {
 
 
 const host = '0.0.0.0'
-const port = 8001
+const port = 8004
 app.listen(port, host, () => {
   console.log(`Server running at http://${host}:${port}/`)
 })
