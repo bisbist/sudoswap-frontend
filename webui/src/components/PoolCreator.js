@@ -61,7 +61,7 @@ const BalanceInput = ({
 const PoolCreator = () => {
     const [state, setState] = React.useState({
         tokenType: TokenType.ETH,
-        nft: "0xe6DCC71803eE1D2fA321d5f32da4DBbdecCB07CE",
+        nft: "0xA50c218C73B0b087d4492587bCF104Ab786b2150",
         bondingCurve: config.BondingCurve.linear.address,
         assetRecipient: "",
         poolType: PoolType.TOKEN,
@@ -211,6 +211,7 @@ const PoolCreator = () => {
 
                             const signer = await provider.getSigner()
                             const signerAddress = await signer.getAddress()
+                            console.log(signerAddress)
 
                             const params = { ...state }
 
@@ -323,7 +324,7 @@ const PoolCreator = () => {
                                 }
                             }
 
-                            if (state.tokenType == TokenType.ETH) { // createPairETH
+                            if (params.tokenType == TokenType.ETH) { // createPairETH
                                 factory.createPairETH(
                                     params.nft,
                                     params.bondingCurve,
