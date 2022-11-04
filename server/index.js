@@ -17,9 +17,9 @@ app.get("/pairs", async (req, res) => {
 })
 
 app.get("/pair", async (req, res) => {
-  const pairAddr = req.query.id
+  const id = req.query.id
   const pairs = await db.getAll()
-  res.json(pairs.find(pair => pair.pair == pairAddr) || null)
+  res.json(pairs.find(pair => pair.id == id) || null)
 })
 
 await (async () => {
@@ -30,7 +30,7 @@ await (async () => {
 
 
 const host = '0.0.0.0'
-const port = 8004
+const port = 8000
 app.listen(port, host, () => {
   console.log(`Server running at http://${host}:${port}/`)
 })
