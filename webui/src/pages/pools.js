@@ -1,18 +1,15 @@
 import React from 'react';
-  
+import PoolCreator from '../components/PoolCreator';
+import PoolsTable from '../components/PoolsTable';
+
 const Pools = () => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'Right',
-        alignItems: 'Right',
-        height: '100vh'
-      }}
-    >
-      <h1>You can create different pool types and see pool information.</h1>
-    </div>
-  );
-};
-  
+    <React.Fragment>
+      <PoolCreator />
+      <PoolsTable />
+    </React.Fragment>
+  )
+}
+
+
 export default Pools;
