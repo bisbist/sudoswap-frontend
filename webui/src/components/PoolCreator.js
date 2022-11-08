@@ -1,6 +1,8 @@
 import React from 'react';
 import { ethers } from 'ethers';
 import config from '../config';
+import AddressInput from "./utils/AddressInput.js"
+import BalanceInput from "./utils/BalanceInput.js"
 
 const TokenType = {
     ETH: "ETH",
@@ -11,51 +13,6 @@ const PoolType = {
     TOKEN: "0",
     NFT: "1",
     TRADE: "2",
-}
-
-const AddressInput = ({
-    name, address, onChange,
-}) => {
-    const [valid, setValid] = React.useState(
-        ethers.utils.isAddress(address));
-    return (
-        <tr>
-            <td>{name}</td>
-            <td>
-                <input
-                    style={{
-                        width: '97.5%',
-                        fontFamily: "monospace"
-                    }}
-                    value={address}
-                    onChange={event => {
-                        const value = event.target.value
-                        setValid(ethers.utils.isAddress(value))
-                        onChange(value)
-                    }} />
-            </td>
-        </tr>
-    )
-}
-
-const BalanceInput = ({
-    name, value, onChange,
-}) => {
-    return (
-        <tr>
-            <td>{name}</td>
-            <td>
-                <input
-                    style={{ width: '97.5%' }}
-                    type='number'
-                    value={value}
-                    step="0.001"
-                    onChange={event => {
-                        onChange(event.target.value)
-                    }} />
-            </td>
-        </tr>
-    )
 }
 
 const PoolCreator = () => {

@@ -5,10 +5,7 @@ import {
   Route,
   Link,
 } from 'react-router-dom';
-import Swap from './pages/swap'
-import Pools from './pages/pools'
-
-const Home = () => <div />
+import Home from './pages/Home'
 
 function App() {
 
@@ -17,18 +14,7 @@ function App() {
 
       <BrowserRouter>
 
-        <div style={{ textAlign: 'center' }}>
-          <Link to='/swap'>
-            <button style={{ margin: 5, padding: 5 }}>Swap</button>
-          </Link>
-          <Link to='/pools'>
-            <button style={{ margin: 5, padding: 5 }}>Pools</button>
-          </Link>
-        </div>
-
         <Routes>
-          <Route path='/swap' element={<Swap />} />
-          <Route path='/pools' element={<Pools />} />
           <Route path='/' element={<Home />} />
         </Routes>
 
