@@ -14,10 +14,10 @@ const PoolsTable = ({
       .then(results => results.json())
       .then(async pairs => {
         const provider = new ethers.providers.JsonRpcProvider(config.chain.rpcUrl);
-        const newPairs = await Promise.all(pairs.map(async pair => {
+        const newPairs = await Promise.all(pairs.map(async pair => {          
           return {
             ...pair,
-            balance: ethers.utils.formatEther((await provider.getBalance(pair.id))),
+            balance: ethers.utils.formatEther(pair.ethBalance),
             delta: ethers.utils.formatEther(pair.delta),
             fee: ethers.utils.formatEther(pair.fee),
             spotPrice: ethers.utils.formatEther(pair.spotPrice),
