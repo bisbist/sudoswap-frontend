@@ -3,26 +3,33 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Link,
 } from 'react-router-dom';
+import { setConfig } from './config';
 import Home from './pages/Home'
 
 function App() {
 
-  return (
-    <div>
+  const [initialized, setInitialized] = React.useState(false)
 
-      <BrowserRouter>
 
-        <Routes>
-          <Route path='/' element={<Home />} />
-        </Routes>
+  React.useEffect(() => {
 
-      </BrowserRouter>
+    fetch("/config")
+      .then(res => res.json())
+      .then(cfg => {
+        setConfig(cfg)
+        setInitialized(true)
+      })
+  }, [])
 
-    </div>
+  return initialized ? (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+      </Routes>
 
-  );
+    </BrowserRouter>
+  ) : null
 }
 
 export default App;

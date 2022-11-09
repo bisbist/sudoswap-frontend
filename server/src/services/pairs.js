@@ -64,7 +64,8 @@ const fetchMissingPairs = async (db) => {
   const pairs = await db.getAll()
   const lastestPairBlockNumber = pairs.reduce((max, pair) => {
     return pair.blockNumber > max ? pair.blockNumber : max
-  }, 1)
+  }, provider.blockNumber - 50)
+  // }, provider.blockNumber - 3015)
 
   const existingPairs = await factoryContract.queryFilter(
     factoryContract.filters.NewPair(),

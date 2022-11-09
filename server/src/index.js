@@ -3,6 +3,7 @@ import express from 'express'
 import { createJSONDB } from "./db/json.js"
 import { fetchMissingPairs, fetchNewPairs } from './services/pairs.js'
 import { fetchPairUpdates } from "./services/swaps.js"
+import config from "./config.js"
 
 const app = express()
 
@@ -21,6 +22,10 @@ app.get("/pairs", async (req, res) => {
 
 app.get("/swaps", async (req, res) => {
   res.json(await swapDB.getAll() || []);
+})
+
+app.get("/config", async (req, res) => {
+  res.json(config);
 })
 
 await (async () => {

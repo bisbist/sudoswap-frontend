@@ -1,7 +1,5 @@
 import React from 'react';
 import { ethers } from 'ethers';
-import { Link } from 'react-router-dom';
-import config from '../config';
 
 const PoolsTable = ({
   onPairClick
@@ -13,7 +11,6 @@ const PoolsTable = ({
     fetch('/pairs')
       .then(results => results.json())
       .then(async pairs => {
-        const provider = new ethers.providers.JsonRpcProvider(config.chain.rpcUrl);
         const newPairs = await Promise.all(pairs.map(async pair => {          
           return {
             ...pair,

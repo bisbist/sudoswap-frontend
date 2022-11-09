@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import config from '../config';
 import AddressInput from "./utils/AddressInput.js"
 import BalanceInput from "./utils/BalanceInput.js"
+import { provider, contracts } from "../environment.js"
 
 const TokenType = {
     ETH: "ETH",
@@ -18,7 +19,7 @@ const PoolType = {
 const PoolCreator = () => {
     const [state, setState] = React.useState({
         tokenType: TokenType.ETH,
-        nft: "0xA50c218C73B0b087d4492587bCF104Ab786b2150",
+        nft: config.ERC721.address.test,
         bondingCurve: config.BondingCurve.linear.address,
         assetRecipient: "",
         poolType: PoolType.TOKEN,
@@ -27,7 +28,7 @@ const PoolCreator = () => {
         spotPrice: "0",
         initialNFTIDs: [],
         initialBalance: "0",
-        erc20Addr: "0x9000Afeb2C460379B5bB29f1946B4124Be873ceD", // erc20 address for ERC20 token type
+        erc20Addr: config.ERC20.address.test, // erc20 address for ERC20 token type
 
         // optional setApprovalForAll vs Specific NFT approval, set true for large number of nfts in initialNFTIDs
         setApprovalForAll: false
@@ -162,13 +163,10 @@ const PoolCreator = () => {
                             validatePoolCreatorInput(state);
                             await switchOrAddCustomNetwork();
 
-                            const provider = new ethers.providers.Web3Provider(window.ethereum);
-
                             await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site
 
-                            const signer = await provider.getSigner()
+                            const signer = provider.getSigner()
                             const signerAddress = await signer.getAddress()
-                            console.log(signerAddress)
 
                             const params = { ...state }
 
@@ -179,8 +177,7 @@ const PoolCreator = () => {
                                 params.assetRecipient = signerAddress;
                             }
 
-                            const factory = new ethers.Contract(
-                                config.PairFactory.address, config.PairFactory.abi, signer)
+                            const factory = contracts.factory(null, signer)
 
                             let wasApprovedForAll = false;
                             let erc721;
@@ -189,8 +186,7 @@ const PoolCreator = () => {
                             if (params.initialNFTIDs.length > 0) {
                                 // allow factory contract to access all nft ids in 
                                 // initialNFTIDs
-                                erc721 = new ethers.Contract(
-                                    params.nft, config.ERC721.abi, signer)
+                                erc721 = contracts.ERC721(params.nft, signer)
 
                                 const initialNFTIDs = params.initialNFTIDs
                                 // const initialNFTIDs = Array.from(new Array(50)).map((_, i) => i)
@@ -258,8 +254,7 @@ const PoolCreator = () => {
                             if (params.tokenType == TokenType.ERC20) {
                                 // allow factory contract to access initialTokenBalance
                                 // amount of ERC20 (token)
-                                const erc20 = new ethers.Contract(
-                                    params.erc20Addr, config.ERC20.abi, signer)
+                                const erc20 = contracts.ERC20(params.erc20Addr, signer)
 
                                 const initialTokenBalance = ethers.utils.parseEther(params.initialBalance)
 
@@ -292,7 +287,8 @@ const PoolCreator = () => {
                                     ethers.utils.parseEther(params.spotPrice),
                                     params.initialNFTIDs,
                                     {
-                                        value: ethers.utils.parseEther(params.initialBalance)
+                                        value: ethers.utils.parseEther(params.initialBalance),
+                                        gasLimit: 3000000,
                                     }
                                 )
                             } else { // createPairERC20
@@ -307,6 +303,9 @@ const PoolCreator = () => {
                                     ethers.utils.parseEther(params.spotPrice),
                                     params.initialNFTIDs,
                                     ethers.utils.parseEther(params.initialBalance),
+                                    {
+                                        gasLimit: 3000000,
+                                    }
                                 ])
                             }
 
@@ -345,12 +344,14 @@ const validatePoolCreatorInput = params => {
 async function switchOrAddCustomNetwork() {
     // switch to custom network or add it
     try {
-        await window.ethereum.request({
+        const res = await window.ethereum.request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: config.chain.id }],
         })
+        console.log(res)
     } catch (switchError) {
         console.log(switchError)
+        return
         if (switchError.code == 4902) { // chain does not exist
             console.log("switch error")
             try {

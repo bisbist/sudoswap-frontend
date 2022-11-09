@@ -108,7 +108,7 @@ const fetchMissingSwaps = async (db) => {
     // })
 
     existingSwaps.forEach(async (event) => {
-        await fetchPairDetailsAndSave(db, event)
+        await fetchSwapDetailsAndSave(db, event)
     })
 }
 

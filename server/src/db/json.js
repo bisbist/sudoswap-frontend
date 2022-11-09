@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+import fs from 'fs-extra';
 
 // create a mock json array db that represents a table with records
 const createJSONDB = async (name) => {
@@ -6,36 +6,32 @@ const createJSONDB = async (name) => {
         await fs.stat(name)
     } catch (error) {
         if (error.code == 'ENOENT') {
-            await fs.writeFile(name, JSON.stringify([]))
+            await fs.outputJSON(name, [])
         }
     }
     return {
         async get(id) {
-            const buf = await fs.readFile(name)
-            const pairs = JSON.parse(buf.toString())
-            return pairs.find(pair => {
-                return pair.id = id
+            const items = await fs.readJSON(name)
+            return items.find(item => {
+                return item.id = id
             })
         },
         async getAll() {
-            const buf = await fs.readFile(name)
-            const pairs = JSON.parse(buf.toString())
-            return pairs;
+            return await fs.readJSON(name)
         },
         async put(id, fields) {
-            const buf = await fs.readFile(name)
-            const pairs = JSON.parse(buf.toString())
-            const index = pairs.findIndex(pair => pair.id == id)
+            const items = await fs.readJSON(name)
+            const index = items.findIndex(item => item.id == id)
             if (index >= 0) { // found
-                pairs[index] = {
+                items[index] = {
                     id, ...fields
                 }
             } else {
-                pairs.push({
+                items.push({
                     id, ...fields
                 })
             }
-            await fs.writeFile(name, JSON.stringify(pairs, null, 2))
+            await fs.outputJSON(name, items, { spaces: 2 })
         },
     };
 }
