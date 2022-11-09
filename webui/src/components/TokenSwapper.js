@@ -3,44 +3,30 @@ import { ethers } from 'ethers';
 import config from '../config';
 import AddressInput from "./utils/AddressInput.js"
 import BalanceInput from "./utils/BalanceInput.js"
+import { contracts, provider } from '../environment';
 
 
-const ownerOf = async (nft, id) => {
-    const erc721ABI = config.ERC721.abi
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const contract = new ethers.Contract(nft, erc721ABI, provider)
-    return await contract.ownerOf(id)
-}
 
 const getOwners = async (nft) => {
     return await Promise.all(
-        Array.from(new Array(50)).map(async (_, i) => {
-            return await ownerOf(nft, i)
+        Array.from(new Array(100)).map(async (_, i) => {
+            return await contracts.ERC721(nft).ownerOf(i)
         }))
 }
 
 const sendNFTs = async (nft, ids, to) => {
-    const erc721ABI = config.ERC721.abi
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
     const accounts = await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
-    console.log(accounts);
 
     const signer = provider.getSigner()
     const signerAddress = await signer.getAddress()
 
-    const contract = new ethers.Contract(nft, erc721ABI, signer)
+    const erc721 = contracts.ERC721(nft, signer)
 
     for (let i = 0; i < ids.length; i++) {
         const id = ids[i]
-        // let txn = await erc721.approve(operator, nftId)
-        const txn = await contract.transferFrom(signerAddress, to, id)
+        const txn = await erc721.transferFrom(signerAddress, to, id)
         await txn.wait()
     }
-}
-
-const getNFTFromPair = async (pair, provider) => {
-    const contract = new ethers.Contract(pair, config.Pair.abi, provider);
-    return await contract.nft()
 }
 
 const setApprovalToOperator = async (nft, ids, operator, signer) => {
@@ -48,7 +34,7 @@ const setApprovalToOperator = async (nft, ids, operator, signer) => {
         const signerAddress = await signer.getAddress()
 
         // allow operator contract to access all nft ids
-        const erc721 = new ethers.Contract(nft, config.ERC721.abi, signer)
+        const erc721 = contracts.ERC721(nft, signer)
 
         // don't allow nfts that's not owned by signer
         const ownerships = await Promise.all(
@@ -110,6 +96,11 @@ export default ({
     selectedPair,
 }) => {
     const [state, setState] = React.useState({
+        selectedRouter: "default",
+        routers: {
+            default: { address: "", allowed: false, },
+            royalty: { address: "", allowed: false, },
+        },
         swapType: SwapTypes.swapNFTsForToken,
         minOutput: "0",
         deadline: "10",
@@ -121,8 +112,31 @@ export default ({
     })
 
     React.useEffect(() => {
-        setState({ ...state, swap: { ...state.swap, pair: selectedPair }})
+        setState({ ...state, swap: { ...state.swap, pair: selectedPair } })
     }, [selectedPair])
+
+    React.useEffect(() => {
+        (async () => {
+            const factory = contracts.factory()
+            const routers = {
+                default: {
+                    address: config.Router.default.address,
+                },
+                royalty: {
+                    address: config.Router.royalty.address,
+                },
+            }
+            const allowed = await Promise.all([
+                await factory.swapAllowed(routers.default.address),
+                await factory.swapAllowed(routers.royalty.address),
+            ])
+            routers.default.allowed = allowed[0]
+            routers.royalty.allowed = allowed[1]
+
+            setState({...state, routers})
+        })()
+    }, [])
+
 
     // swap nfts for token
     return (
@@ -137,6 +151,55 @@ export default ({
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>Router</td>
+                            <td style={{ display: 'flex', flexDirection: 'row' }}>
+                                <select
+                                    style={{ flex: 1 }}
+                                    value={state.selectedRouter}
+                                    onChange={event => {
+                                        setState({ ...state, selectedRouter: event.target.value })
+                                    }} >
+                                    <option value="default">Default</option>
+                                    <option value="royalty">Royalty</option>
+                                </select>
+                                <input
+                                    type="checkbox"
+                                    checked={state.routers[state.selectedRouter].allowed}
+                                    onChange={async (event) => {
+                                        let allowed = event.target.checked
+                                        const router = state.routers[state.selectedRouter]
+
+                                        await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site
+
+                                        const signer = provider.getSigner()
+
+                                        let factory = contracts.factory()
+
+                                        const owner = await factory.owner()
+                                        if (owner != await signer.getAddress()) {
+                                            alert(`Unauthorized. Please switch your wallet to ${owner}!`)
+                                            return
+                                        }
+
+                                        factory = contracts.factory(null, signer)
+                                        
+                                        const txn = await factory.setRouterAllowed(router.address, allowed)
+                                        await txn.wait()
+
+                                        setState({ 
+                                            ...state,
+                                            routers: {
+                                                ...state.routers,
+                                                [state.selectedRouter]: {
+                                                    ...state.routers[state.selectedRouter],
+                                                    allowed: await factory.swapAllowed(router.address),
+                                                } 
+                                            }
+                                        })
+                                    }} />
+                            </td>
+                        </tr>
                         <tr>
                             <td>Swap Type</td>
                             <td>
@@ -214,29 +277,44 @@ export default ({
                             //     "0xD96D3D8a3a35552b297Da318248CC0B6676c335a"
                             // )
                             // return
-                            let routerABI = config.Router.abi;
-                            let routerAddress = config.Router.address;
 
-                            const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-                            const accounts = await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
-                            console.log(accounts);
+                            await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
 
                             const signer = provider.getSigner()
 
-                            const signerAddress = await signer.getAddress()
+                            let router
+                            switch (state.selectedRouter) {
+                                case "default":
+                                    router = contracts.router(null, signer)
+                                    break;
+                                case "royalty":
+                                    router = contracts.royaltyRouter(null, signer)
+                                    break
+                                default:
+                                    alert(`Invalid Router ${state.selectedRouter}`)
+                                    return
+                            }
 
-                            const router = new ethers.Contract(
-                                routerAddress, routerABI, signer
-                            )
-
-                            const nft = await getNFTFromPair(state.swap.pair, provider)
+                            const nft = await contracts.pair(state.swap.pair).nft()
                             const nftIds = state.swap.nftIds
-
-                            // console.log(await getOwners(nft))
+                            
+                            // console.log(router.filters.RoyaltyIssued())
+                            // const lookupAddress = await contracts.royaltyRegistry().getRoyaltyLookupAddress(nft)
+                            // console.log(lookupAddress)
+                            // const supportsInterface = await contracts.ERC2981(lookupAddress).supportsInterface("0x2a55205a")
+                            // console.log(supportsInterface)
                             // return
 
-                            await setApprovalToOperator(nft, nftIds, routerAddress, signer)
+                            // console.log(await getOwners(nft))
+                            // console.log(router.address)
+                            // return
+                            
+                            if (nftIds.length < 1) {
+                                alert("Please specify NFT IDs!")
+                                return
+                            }
+                            
+                            await setApprovalToOperator(nft, nftIds, router.address, signer)
 
                             const swapList = [
                                 [state.swap.pair, nftIds]
@@ -244,7 +322,7 @@ export default ({
 
                             let tokenRecipient = state.tokenRecipient
                             if (state.tokenRecipient == "") {
-                                tokenRecipient = signerAddress
+                                tokenRecipient = await signer.getAddress()
                             }
 
                             let deadline = Date.now() + Math.floor(1000 * parseFloat(state.deadline))
@@ -257,11 +335,14 @@ export default ({
                                         ethers.utils.parseEther(state.minOutput),
                                         tokenRecipient,
                                         deadline,
+                                        {
+                                            gasLimit: 30000000,
+                                        }
                                     )
                                     break;
                                 case SwapTypes.swapETHForAnyNFTs:
                                     // code
-                                    
+
                                     break
                                 default:
                                     break;
@@ -271,7 +352,6 @@ export default ({
                             const tx = await txn.wait();
                             console.log("TXN Events", tx.events);
                             console.log('Sucessfully Swapped NFt for eth using type 0 pool', tx.hash);
-
                         }}>
                         SwapNFTsForETH
                     </button>
