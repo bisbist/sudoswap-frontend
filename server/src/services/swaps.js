@@ -3,14 +3,14 @@ import { ethers } from 'ethers'
 import config from '../config.js';
 import { provider, pairContract } from "../envionment.js"
 
-const fetchSwapDetailsAndSave = async (db, event) => {
+const fetchSwapDetailsAndSave = async (db, event, args) => {
     await db.put(`${event.blockNumber}_${event.transactionIndex}_${event.logIndex}`, {
+        ...args,
         pairId: event.address,
         blockNumber: event.blockNumber,
         txHash: event.transactionHash,
         txIndex: event.transactionIndex,
         logIndex: 1,
-        type: "SwapNFTInPair",
     })
 }
 
@@ -47,14 +47,36 @@ const pairEventCallbacks = [
                     ethBalance: ethBalance.toString(),
                     tokenBalance,
                 })
-                await fetchSwapDetailsAndSave(swapDB, event)
+                await fetchSwapDetailsAndSave(swapDB, event, { type: "SwapNFTInPair" })
                 console.log(event)
             }
         },
     }, {
         filter: pairContract.filters.SwapNFTOutPair(), // nft balance, spotPrice
         callback: async (event, args) => {
-
+            const { pairDB, swapDB } = args
+            const pair = await pairDB.get(event.address)
+            if (pair) {
+                const pc = new ethers.Contract(pair.id, config.Pair.abi, provider)
+                const [
+                    spotPrice,
+                    ethBalance,
+                    tokenBalance,
+                    // nftIds, // change
+                ] = await Promise.all([
+                    pc.spotPrice(),
+                    provider.getBalance(pair.id),
+                    0,
+                ])
+                await pairDB.put(pair.id, {
+                    ...pair,
+                    spotPrice: spotPrice.toString(),
+                    ethBalance: ethBalance.toString(),
+                    tokenBalance,
+                })
+                await fetchSwapDetailsAndSave(swapDB, event, { type: "SwapNFTOutPair" })
+                console.log(event)
+            }
         },
     }, {
         filter: pairContract.filters.SpotPriceUpdate(null), // spotPrice
