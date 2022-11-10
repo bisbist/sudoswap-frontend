@@ -4,6 +4,7 @@ import config from '../config';
 import AddressInput from "./utils/AddressInput.js"
 import BalanceInput from "./utils/BalanceInput.js"
 import { provider, contracts } from "../environment.js"
+import ArrayInput from './utils/ArrayInput';
 
 const TokenType = {
     ETH: "ETH",
@@ -126,31 +127,23 @@ const PoolCreator = () => {
 
                         {
                             state.poolType != PoolType.TOKEN ? (
-                                <tr>
-                                    <td style={{ display: 'flex', flexDirection: 'row' }}>
-                                        <span>Initial NFTIDs</span>
-                                        <span style={{ flex: 1 }} />
-                                        <input title='SetApprovalForAll'
-                                            type='checkbox'
-                                            checked={state.setApprovalForAll}
-                                            onChange={event => {
-                                                setState({
-                                                    ...state,
-                                                    setApprovalForAll: !state.setApprovalForAll,
-                                                })
-                                            }} />
-                                    </td>
-                                    <td>
-                                        <input
-                                            value={state.initialNFTIDs.join(",")}
-                                            onChange={event => {
-                                                setState({
-                                                    ...state,
-                                                    initialNFTIDs: event.target.value.split(",")
-                                                })
-                                            }} />
-                                    </td>
-                                </tr>
+                                <ArrayInput
+                                    name="Initial NFT IDs"
+                                    values={state.initialNFTIDs}
+                                    onValuesChange={values => {
+                                        setState({
+                                            ...state,
+                                            initialNFTIDs: values
+                                        })
+                                    }}
+                                    checkboxTitle="SetApprovalForAll"
+                                    checkboxSelected={state.setApprovalForAll}
+                                    onCheckboxClick={() => {
+                                        setState({
+                                            ...state,
+                                            setApprovalForAll: !state.setApprovalForAll,
+                                        })
+                                    }} />
                             ) : null
                         }
                     </tbody>
@@ -276,8 +269,10 @@ const PoolCreator = () => {
                                 }
                             }
 
+                            let txn
+
                             if (params.tokenType == TokenType.ETH) { // createPairETH
-                                factory.createPairETH(
+                                txn = await factory.createPairETH(
                                     params.nft,
                                     params.bondingCurve,
                                     params.assetRecipient,
@@ -292,7 +287,7 @@ const PoolCreator = () => {
                                     }
                                 )
                             } else { // createPairERC20
-                                factory.createPairERC20([
+                                txn = await factory.createPairERC20([
                                     params.erc20Addr,
                                     params.nft,
                                     params.bondingCurve,
@@ -309,9 +304,11 @@ const PoolCreator = () => {
                                 ])
                             }
 
+                            await txn.wait()
+
                             // unapprove factory to access NFTIDs
                             if (wasApprovedForAll && !!erc721) {
-                                let txn = await erc721.setApprovalForAll(factory.address, false)
+                                txn = await erc721.setApprovalForAll(factory.address, false)
                                 await txn.wait()
                             }
                         }}>
@@ -350,8 +347,6 @@ async function switchOrAddCustomNetwork() {
         })
         console.log(res)
     } catch (switchError) {
-        console.log(switchError)
-        return
         if (switchError.code == 4902) { // chain does not exist
             console.log("switch error")
             try {
