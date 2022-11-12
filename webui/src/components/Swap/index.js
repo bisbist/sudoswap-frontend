@@ -71,61 +71,92 @@ const Swap = () => {
     }, [])
 
     return (
-        <div>
-            {/* select router */}
-            <div>
-                <select
-                    style={{ flex: 1 }}
-                    value={routerName}
-                    onChange={event => {
-                        setRouterName(event.target.value)
-                    }} >
-                    {
-                        Object.keys(routers).map((key, i) => {
-                            return <option key={i} value={key}>{key}</option>
-                        })
-                    }
-                </select>
-                <input
-                    type="checkbox"
-                    checked={routers[routerName].allowed}
-                    onChange={async (event) => {
-                        const allowed = setRouterAllowed(
-                            routers[routerName].address, event.target.checked)
-                        setRouters({
-                            ...routers,
-                            [routerName]: { ...routers[routerName], allowed }
-                        })
-                    }} />
-            </div>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+            <span style={{ flex: 1 }} />
+            <div style={{
+                border: 'solid',
+                borderWidth: 1,
+                padding: 10,
+                borderRadius: 5,
+                margin: 5,
+            }}>
+                <table style={{
+                    margin: 5, minWidth: 500, border: 'solid',
+                    borderWidth: 1, borderColor: "red"
+                }}>
+                    <thead>
+                        <tr>
+                            <th style={{ width: "30%" }} />
+                            <th style={{ width: "70%" }} />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Router</td>
+                            <td style={{ display: 'flex', flexDirection: 'row' }}>
+                                {/* select router */}
+                                <select
+                                    style={{ flex: 1 }}
+                                    value={routerName}
+                                    onChange={event => {
+                                        setRouterName(event.target.value)
+                                    }} >
+                                    {
+                                        Object.keys(routers).map((key, i) => {
+                                            return <option key={i} value={key}>{key}</option>
+                                        })
+                                    }
+                                </select>
+                                <input
+                                    type="checkbox"
+                                    checked={routers[routerName].allowed}
+                                    onChange={async (event) => {
+                                        const allowed = setRouterAllowed(
+                                            routers[routerName].address, event.target.checked)
+                                        setRouters({
+                                            ...routers,
+                                            [routerName]: { ...routers[routerName], allowed }
+                                        })
+                                    }} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Swap Type</td>
+                            <td>
+                                {/* select swap type */}
+                                <select
+                                    style={{ width: '100%' }}
+                                    value={swapType}
+                                    onChange={event => setSwapType(event.target.value)} >
+                                    {
+                                        Object.keys(Types).map((key, i) => {
+                                            return <option key={i} value={Types[key]}>{key}</option>
+                                        })
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            {/* select swap type */}
-            <select
-                style={{ width: '100%' }}
-                value={swapType}
-                onChange={event => setSwapType(event.target.value)} >
+
+                {/* render swap component based on swap type */}
                 {
-                    Object.keys(Types).map((key, i) => {
-                        return <option key={i} value={Types[key]}>{key}</option>
-                    })
+                    swapType == Types.swapETHForAnyNFTs ? (
+                        <SwapETHForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.SwapNFTsForToken ? (
+                        <SwapNFTsForToken router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : null
                 }
-            </select>
 
-            {/* render swap component based on swap type */}
-            {
-                swapType == Types.swapETHForAnyNFTs ? (
-                    <SwapETHForAnyNFTs router={{
-                        name: routerName,
-                        createContract: routers[routerName].createContract,
-                    }} />
-                ) : swapType == Types.SwapNFTsForToken ? (
-                    <SwapNFTsForToken router={{
-                        name: routerName,
-                        createContract: routers[routerName].createContract,
-                    }} />
-                ) : null
-            }
-
+            </div>
+            <span style={{ flex: 1 }} />
         </div>
     )
 }
