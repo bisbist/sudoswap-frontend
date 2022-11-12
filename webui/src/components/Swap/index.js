@@ -1,7 +1,7 @@
 import React from 'react'
 import config from '../../config'
-import { contracts } from '../../environment'
-import { provider } from '../../environment'
+import { provider, contracts } from '../../environment'
+import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
 
 const Types = {
     swapETHForAnyNFTs: "0",
@@ -112,7 +112,10 @@ const Swap = () => {
             {/* render swap component based on swap type */}
             {
                 swapType == Types.swapETHForAnyNFTs ? (
-                    <div />
+                    <SwapETHForAnyNFTs router={{
+                        name: routerName,
+                        createContract: routers[routerName].createContract,
+                    }} />
                 ) : null
             }
 
