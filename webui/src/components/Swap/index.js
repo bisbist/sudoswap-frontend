@@ -1,10 +1,12 @@
 import React from 'react'
 import config from '../../config'
 import { provider, contracts } from '../../environment'
+import SwapNFTsForToken from './SwapNFTsForToken'
 import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
 
 const Types = {
     swapETHForAnyNFTs: "0",
+    SwapNFTsForToken: "1",
 }
 
 const initializeRouters = async (defaultRouters) => {
@@ -113,6 +115,11 @@ const Swap = () => {
             {
                 swapType == Types.swapETHForAnyNFTs ? (
                     <SwapETHForAnyNFTs router={{
+                        name: routerName,
+                        createContract: routers[routerName].createContract,
+                    }} />
+                ) : swapType == Types.SwapNFTsForToken ? (
+                    <SwapNFTsForToken router={{
                         name: routerName,
                         createContract: routers[routerName].createContract,
                     }} />
