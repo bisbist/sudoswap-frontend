@@ -6,14 +6,18 @@ const PairSwapSpecific = ({
     onChange,
 }) => {
     return (
-        <div>
+        <div style={{ width: "100%", display: "flex" }}>
             <input
+                style={{ flex: 1 }}
                 value={pair}
+                placeholder="Pair Address"
                 onChange={event => {
                     onChange({ nftIds, pair: event.target.value })
                 }} />
-            <input 
+            <input
+                style={{ flex: 1 }}
                 value={nftIds.join(",")}
+                placeholder="NFT IDs (CSV)"
                 onChange={event => {
                     onChange({ pair, nftIds: event.target.value.split(",") })
                 }} />
