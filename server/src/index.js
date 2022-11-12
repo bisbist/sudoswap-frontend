@@ -4,7 +4,7 @@ import express from 'express'
 import db from './db/mongo.js'
 import config from "./config.js"
 import { Pair, fetchPairUpdates } from './services/pairs'
-
+import { Swap, fetchSwapUpdates } from './services/swaps'
 
 
 const app = express()
@@ -22,6 +22,10 @@ app.get("/pairs", async (req, res) => {
   res.json(await Pair.find())
 })
 
+app.get("/swaps", async (req, res) => {
+  res.json(await Swap.find())
+})
+
 app.get('/ping/:id', (req, res) => {
   res.send(`Sudoswap App! @ ${req.params.id}`)
 })
@@ -36,6 +40,7 @@ const main = async () => {
   })
 
   fetchPairUpdates()
+  fetchSwapUpdates()
 }
 
 
