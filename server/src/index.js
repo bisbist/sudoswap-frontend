@@ -1,44 +1,35 @@
 import cors from 'cors'
+import helmet from 'helmet'
 import express from 'express'
-import { createJSONDB } from "./db/json.js"
-import { fetchMissingPairs, fetchNewPairs } from './services/pairs.js'
-import { fetchPairUpdates } from "./services/swaps.js"
+import db from './db/mongo.js'
 import config from "./config.js"
+
+
 
 const app = express()
 
 app.use(cors()) // handle cross origin request
+app.use(helmet())
+app.use(express.json())
 
-var pairDB;
-var swapDB;
-
-app.get('/', (req, res) => {
-  res.send('Sudoswap App!')
-})
-
-app.get("/pairs", async (req, res) => {
-  res.json(await pairDB.getAll() || []);
-})
-
-app.get("/swaps", async (req, res) => {
-  res.json(await swapDB.getAll() || []);
-})
 
 app.get("/config", async (req, res) => {
   res.json(config);
 })
 
-await (async () => {
-  pairDB = await createJSONDB("./data/pairs.json")
-  swapDB = await createJSONDB("./data/swaps.json")
-  await fetchMissingPairs(pairDB)
-  fetchNewPairs(pairDB) // subscribe
-  fetchPairUpdates(pairDB, swapDB)
-})()
-
-
-const host = '0.0.0.0'
-const port = process.env.PORT || "8000"
-app.listen(port, host, () => {
-  console.log(`Server running at http://${host}:${port}/`)
+app.get('/ping/:id', (req, res) => {
+  res.send(`Sudoswap App! @ ${req.params.id}`)
 })
+
+const main = async () => {
+  await db.connect(process.env.MONGODB_URI)
+
+  const host = "0.0.0.0"
+  const port = process.env.PORT || "8000"
+  app.listen(port, host, () => {
+    console.log(`Server running at http://${host}:${port}/`)
+  })
+}
+
+
+main()
