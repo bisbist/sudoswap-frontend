@@ -89,24 +89,22 @@ const SwapETHForAnyNFTs = ({
                     await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
 
                     const signer = provider.getSigner()
+                    console.log(signer)
 
                     const router = createRouterContract(signer)
 
-                    let deadline = Date.now() + Math.floor(1000 * parseFloat(deadline))
-
-                    if (ethRecipient == "") {
-                        ethRecipient = await signer.getAddress()
+                    const params = {
+                        deadline: Date.now() + Math.floor(1000 * parseFloat(deadline)),
+                        ethRecipient: ethRecipient != "" ? ethRecipient : await signer.getAddress(),
+                        nftRecipient: nftRecipient != "" ? nftRecipient : await signer.getAddress(),
+                        swapList: swapList.map(swap => [swap.pair, swap.numItems]),
                     }
 
-                    if (nftRecipient == "") {
-                        nftRecipient = await signer.getAddress()
-                    }
-
-                    let txn = await router.swapETHForSpecificNFTs(
-                        swapList.map(swap => [swap.pair, swap.numItems]),
-                        ethRecipient,
-                        nftRecipient,
-                        deadline,
+                    let txn = await router.swapETHForAnyNFTs(
+                        params.swapList,
+                        params.ethRecipient,
+                        params.nftRecipient,
+                        params.deadline,
                         {
                             value: ethers.utils.parseEther(amount),
                             gasLimit: 30000000,
