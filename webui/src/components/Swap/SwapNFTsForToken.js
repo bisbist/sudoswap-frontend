@@ -14,51 +14,7 @@ const SwapNFTsForToken = ({
     const [deadline, setDeadline] = React.useState("0")    // uint256 deadline
 
     return (
-        <div style={{ textAlign: "right" }}>
-            <table style={{
-                margin: 5, minWidth: 500,
-                border: 'solid', borderWidth: 1, borderColor: "red"
-            }}>
-                <thead>
-                    <tr>
-                        <th style={{ width: "30%" }} />
-                        <th style={{ width: "70%" }} />
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Token Recipient</td>
-                        <td>
-                            <input
-                                style={{ width: "97.5%" }}
-                                value={tokenRecipient}
-                                onChange={event => setTokenRecipient(event.target.value)} />
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>MinOutput</td>
-                        <td>
-                            <input
-                                style={{ width: "97.5%" }}
-                                value={minOutput}
-                                onChange={event => setMinOutput(event.target.value)} />
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Deadline</td>
-                        <td>
-                            <input
-                                style={{ width: "97.5%" }}
-                                type="number" step={1} min={5}
-                                value={deadline}
-                                onChange={event => setDeadline(event.target.value)} />
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+        <div>
             {
                 swapList.map((swap, i) => {
                     return (
@@ -82,37 +38,57 @@ const SwapNFTsForToken = ({
                 setSwapList(newSwapList)
             }}>Add Swap!</button>
 
-            <div style={{ textAlign: "center" }}>
+            <div>
+                <input
+                    type="number" step={0.001} min={0}
+                    value={minOutput}
+                    onChange={event => {
+                        setMinOutput(event.target.value)
+                    }} />
+            </div>
+
+            <div>
+                <input
+                    value={tokenRecipient}
+                    onChange={event => setTokenRecipient(event.target.value)} />
+            </div>
+
+            <div>
+                <input
+                    type="number" step={1} min={5}
+                    value={deadline}
+                    onChange={event => setDeadline(event.target.value)} />
+
+            </div>
+
+
             <button onClick={async () => {
 
                 await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
 
                 const signer = provider.getSigner()
-                console.log(signer.getAddress())
 
                 const router = createRouterContract(signer)
-                const params = {
-                    deadline: Date.now() + Math.floor(1000 * parseFloat(deadline)),
-                    tokenRecipient: tokenRecipient != "" ? tokenRecipient : await signer.getAddress(),
-                    swapList: swapList.map(swap => [swap.pair, swap.nftIds]),
-                    minOutput: ethers.utils.parseEther(minOutput),
+
+                let deadline = Date.now() + Math.floor(1000 * parseFloat(deadline))
+
+                if (tokenRecipient == "") {
+                    tokenRecipient = await signer.getAddress()
                 }
 
-                let txn = await router.swapNFTsForToken(
-                    params.swapList,
-                    params.minOutput,
-                    params.tokenRecipient,
-                    params.deadline,
+                let txn = await router.SwapNFTsForToken(
+                    swapList.map(swap => [swap.pair, swap.nftIds]),
+                    ethers.utils.parseEther(minOutput),
+                    tokenRecipient,
+                    deadline,
                     {
                         gasLimit: 30000000,
                     }
                 )
-                console.log("here we are")
+
                 await txn.wait()
 
-
             }}>Send Transaction!</button>
-            </div>
 
         </div>
     )
