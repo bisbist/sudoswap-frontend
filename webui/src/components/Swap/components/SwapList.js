@@ -1,6 +1,9 @@
 import React from "react"
 import PairSwapAny from "./PairSwapAny"
 import PairSwapSpecific from "./PairSwapSpecific"
+import RobustPairSwapAny from "./RobustPairSwapAny"
+import RobustPairSwapSpecific from "./RobustPairSwapSpecific"
+
 
 
 const SwapList = ({
@@ -44,6 +47,11 @@ const SwapList = ({
                             return onChange([...swapList, { pair: "", numItems: 0 }])
                         case "PairSwapSpecific":
                             return onChange([...swapList, { pair: "", nftIds: [] }])
+                        case "RobustPairSwapAny":
+                            //console.log("hello bishal")
+                            return onChange([...swapList, { swapInfo: { pair: "", numItems: 0 }, maxCost: 0 }])
+                        case "RobustPairSwapSpecific":
+                            return onChange([...swapList, { swapInfo: { pair: "", nftIds: [] }, maxCost: 0 }])
                     }
                 }}>Add</button>
             </div>
@@ -52,14 +60,22 @@ const SwapList = ({
                 {
                     swapList.map((arg, index) => {
                         return (
-                            <div key={index} style={{ display: "flex", padding: 5, border: "solid", borderWidth: 1, borderColor: "green"  }}>
+                            <div key={index} style={{ display: "flex", padding: 5, border: "solid", borderWidth: 1, borderColor: "green" }}>
                                 {
                                     inputType == "PairSwapAny" ? (
                                         <PairSwapAny value={arg} onChange={onChangeHandler(index)} />
                                     ) :
                                         inputType == "PairSwapSpecific" ? (
                                             <PairSwapSpecific value={arg} onChange={onChangeHandler(index)} />
-                                        ) : null
+                                        ) :
+                                            inputType == "RobustPairSwapAny" ? (
+                                                <RobustPairSwapAny value={arg} onChange={onChangeHandler(index)} />
+
+                                            ) :
+                                                inputType == "RobustPairSwapSpecific" ? (
+                                                    <RobustPairSwapSpecific value={arg} onChange={onChangeHandler(index)} />
+                                                )
+                                                    : null
                                 }
                                 <button onClick={onCloseHandler(index)}>x</button>
                             </div>
