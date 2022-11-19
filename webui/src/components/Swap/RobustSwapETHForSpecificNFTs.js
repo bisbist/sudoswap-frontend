@@ -8,9 +8,7 @@ const RobustSwapETHForSpecificNFTs = ({
     router: { name: routerName, createContract: createRouterContract },
 }) => {
 
-    const [swapList, setSwapList] = React.useState([
-        { swapInfo: { pair: "", nftIds: [] }, maxCost: 0 },
-    ])     // RobustPairSwapAny[] swapList
+    const [swapList, setSwapList] = React.useState([])     // RobustPairSwapAny[] swapList
     const [ethValue, setETHValue] = React.useState("0")
     const [nftRecipient, setNFTRecipient] = React.useState("")    // address nftRecipient
     const [ethRecipient, setETHRecipient] = React.useState("")    // address nftRecipient

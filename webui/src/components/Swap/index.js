@@ -3,10 +3,25 @@ import config from '../../config'
 import { provider, contracts } from '../../environment'
 import SwapNFTsForToken from './SwapNFTsForToken'
 import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
+import SwapERC20ForAnyNFTs from './SwapERC20ForAnyNFTs'
+import RobustSwapETHForAnyNFTs from './RobustSwapETHForAnyNFTs'
+import RobustSwapETHForSpecificNFTs from './RobustSwapETHForSpecificNFTs'
+import RobustSwapERC20ForAnyNFTs from './RobustSwapERC20ForAnyNFTs'
+import SwapERC20ForSpecificNFTs from './SwapERC20ForSpecificNFTs'
+
 
 const Types = {
     swapETHForAnyNFTs: "0",
     SwapNFTsForToken: "1",
+    RobustSwapETHForAnyNFTs: "2",
+    SwapERC20ForAnyNFTs: "3",
+    SwapERC20ForSpecificNFTs: "4",
+    RobustSwapETHForSpecificNFTs: "5",
+    RobustSwapERC20ForAnyNFTs: "6",
+    RobustSwapERC20ForSpecificNFTs: "7",
+    RobustSwapNFTsForToken: "8",
+
+
 }
 
 const initializeRouters = async (defaultRouters) => {
@@ -62,8 +77,8 @@ const Swap = () => {
     const [swapType, setSwapType] = React.useState(Types.swapETHForAnyNFTs)
     const [routerName, setRouterName] = React.useState("default")
     const [routers, setRouters] = React.useState({
-        default: { address: "", allowed: false, createContract: (signer) => contracts.router() },
-        royalty: { address: "", allowed: false, createContract: (signer) => contracts.royaltyRouter },
+        default: { address: "", allowed: false, createContract: (signer) => contracts.router(null, signer) },
+        royalty: { address: "", allowed: false, createContract: (signer) => contracts.royaltyRouter(null,signer) },
     })
 
     React.useEffect(() => {
@@ -152,7 +167,32 @@ const Swap = () => {
                             name: routerName,
                             createContract: routers[routerName].createContract,
                         }} />
-                    ) : null
+                    ) : swapType == Types.RobustSwapETHForAnyNFTs ? (
+                        <RobustSwapETHForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.SwapERC20ForAnyNFTs ? (
+                        <SwapERC20ForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.SwapERC20ForSpecificNFTs ? (
+                        <SwapERC20ForSpecificNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.RobustSwapETHForSpecificNFTs ? (
+                        <RobustSwapETHForSpecificNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.RobustSwapERC20ForAnyNFTs ? (
+                        <RobustSwapERC20ForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ): null
                 }
 
             </div>
