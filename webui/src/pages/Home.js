@@ -11,7 +11,6 @@ const Home = () => {
     <React.Fragment>
       <div style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}>
         <PoolCreator />
-        <TokenSwapper selectedPair={pair} />
         <Swap />
       </div>
 
