@@ -3,13 +3,13 @@ import PairSwapSpecific from "./PairSwapSpecific"
 
 
 const RobustPairSwapSpecific = ({
-    value: { swapInfo: { pair, nftIds }, maxCost },
+    value: { swapInfo, maxCost },
     onChange,
 }) => {
     return (
         <div>
             <PairSwapSpecific
-                value={{ pair, nftIds }}
+                value={swapInfo}
                 onChange={swapInfo => {
                     onChange({ swapInfo, maxCost })
                 }} />
@@ -18,7 +18,7 @@ const RobustPairSwapSpecific = ({
                 value={maxCost}
                 onChange={event => {
                     onChange({
-                        swapInfo: { pair, nftIds },
+                        swapInfo,
                         maxCost: event.target.value,
                     })
                 }} />

@@ -27,6 +27,25 @@ const SwapList = ({
         }
     }
 
+    const onAddhandler = () => {
+        switch (inputType) {
+            case "PairSwapAny":
+                return onChange([...swapList, { pair: "", numItems: 0 }])
+            case "PairSwapSpecific":
+                return onChange([...swapList, { pair: "", nftIds: [], flag: false, flagTitle: "Set approval for all" }])
+            case "RobustPairSwapAny":
+                return onChange([...swapList, { swapInfo: { pair: "", numItems: 0 }, maxCost: 0 }])
+            case "RobustPairSwapSpecific":
+                return onChange([...swapList, { swapInfo: { pair: "", nftIds: [], flag: false, flagTitle: "Set approval for all" }, maxCost: 0 }])
+        }
+    }
+
+    React.useEffect(() => {
+        if (swapList.length < 1) {
+            onAddhandler()
+        }
+    }, [swapList])
+
     return (
         <div style={{
             margin: 5, minWidth: 500,
@@ -41,19 +60,7 @@ const SwapList = ({
 
                 <span style={{ flex: 1 }} />
 
-                <button onClick={() => {
-                    switch (inputType) {
-                        case "PairSwapAny":
-                            return onChange([...swapList, { pair: "", numItems: 0 }])
-                        case "PairSwapSpecific":
-                            return onChange([...swapList, { pair: "", nftIds: [] }])
-                        case "RobustPairSwapAny":
-                            //console.log("hello bishal")
-                            return onChange([...swapList, { swapInfo: { pair: "", numItems: 0 }, maxCost: 0 }])
-                        case "RobustPairSwapSpecific":
-                            return onChange([...swapList, { swapInfo: { pair: "", nftIds: [] }, maxCost: 0 }])
-                    }
-                }}>Add</button>
+                <button onClick={onAddhandler}>Add</button>
             </div>
 
             <div style={{ overflow: "auto", flex: 1, scrollbarWidth: "none", margin: 5 }}>
@@ -67,6 +74,7 @@ const SwapList = ({
                                     ) :
                                         inputType == "PairSwapSpecific" ? (
                                             <PairSwapSpecific value={arg} onChange={onChangeHandler(index)} />
+
                                         ) :
                                             inputType == "RobustPairSwapAny" ? (
                                                 <RobustPairSwapAny value={arg} onChange={onChangeHandler(index)} />
