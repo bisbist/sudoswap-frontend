@@ -111,7 +111,7 @@ export default ({
         swap: {
             pair: "",
             nftIds: [],
-            numItems: "0"
+            numItems: ""
         },
         // optional setApprovalForAll vs Specific NFT approval, set true for large number of nfts in initialNFTIDs
         setApprovalForAll: false
@@ -243,7 +243,7 @@ export default ({
                             address={state.tokenRecipient}
                             onChange={tokenRecipient => setState({ ...state, tokenRecipient })} />
                         {
-                            state.swapType == SwapTypes.swapETHForSpecificNFTs ? (
+                            state.swapType == SwapTypes.swapETHForSpecificNFTs || state.swapType == SwapTypes.swapETHForAnyNFTs ? (
                                 <BalanceInput
                                     name="Token Amount"
                                     value={state.tokenAmount}
@@ -260,6 +260,20 @@ export default ({
                             name='Pair'
                             address={state.swap.pair}
                             onChange={pair => setState({ ...state, swap: { ...state.swap, pair } })} />
+
+                        {
+                            state.swapType == SwapTypes.swapETHForAnyNFTs ? (
+                                <BalanceInput
+                                    name="Number of NFTs"
+                                    values={state.swap.numItems}
+                                    onChange={values => setState({
+                                        ...state, swap: {
+                                            ...state.swap,
+                                            numItems: values,
+                                        }
+                                    })} />
+                            ) : null
+                        }
 
                         {
                             state.swapType == SwapTypes.swapNFTsForToken ||
@@ -339,17 +353,23 @@ export default ({
 
 
 
+                            let tokenRecipient = state.tokenRecipient
+                            if (state.tokenRecipient == "") {
+                                tokenRecipient = await signer.getAddress()
+                            }
+
+                            let nftRecipient = state.nftRecipient
+                            if (state.nftRecipient == "") {
+                                nftRecipient = await signer.getAddress()
+                            }
+
+
                             let txn
 
                             switch (state.swapType) {
 
                                 case SwapTypes.swapNFTsForToken:
                                 case SwapTypes.swapETHForSpecificNFTs:
-
-                                    let tokenRecipient = state.tokenRecipient
-                                    if (state.tokenRecipient == "") {
-                                        tokenRecipient = await signer.getAddress()
-                                    }
 
                                     const nftIds = state.swap.nftIds.filter(v => v.trim() != "")
                                     if (nftIds.length < 1) {
@@ -378,10 +398,6 @@ export default ({
 
                                         case SwapTypes.swapETHForSpecificNFTs:
 
-                                            let nftRecipient = state.nftRecipient
-                                            if (state.nftRecipient == "") {
-                                                nftRecipient = await signer.getAddress()
-                                            }
                                             txn = await router.swapETHForSpecificNFTs(
                                                 swapList,
                                                 tokenRecipient,
@@ -393,9 +409,31 @@ export default ({
                                                 }
                                             )
                                             break
+                                            
                                     }
 
                                     break
+
+                                case SwapTypes.swapETHForAnyNFTs:
+
+                                    let numItems = state.swap.numItems
+
+                                    swapList = [
+                                        [state.swap.pair, numItems]
+                                    ]
+
+                                    txn = await router.swapETHForAnyNFTs(
+                                        swapList,
+                                        tokenRecipient,
+                                        nftRecipient,
+                                        deadline,
+                                        {
+                                            value: ethers.utils.parseEther(state.tokenAmount),
+                                            gasLimit: 30000000,
+                                        }
+                                    )
+                                    break
+
                                 default:
                                     break;
                             }

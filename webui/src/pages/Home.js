@@ -1,6 +1,7 @@
 import React from 'react';
 import PoolCreator from '../components/PoolCreator';
 import PoolsTable from '../components/PoolsTable';
+import Swap from '../components/Swap';
 import TokenSwapper from '../components/TokenSwapper';
 
 const Home = () => {
@@ -10,7 +11,7 @@ const Home = () => {
     <React.Fragment>
       <div style={{ display: 'flex', flexDirection: 'row', marginTop: 20 }}>
         <PoolCreator />
-        <TokenSwapper selectedPair={pair} />
+        <Swap />
       </div>
 
       <PoolsTable
