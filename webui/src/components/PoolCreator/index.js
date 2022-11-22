@@ -1,10 +1,10 @@
 import React from 'react';
 import { ethers } from 'ethers';
-import config from '../config';
-import AddressInput from "./utils/AddressInput.js"
-import BalanceInput from "./utils/BalanceInput.js"
-import { provider, contracts } from "../environment.js"
-import ArrayInput from './utils/ArrayInput';
+import config from '../../config';
+import AddressInput from "../utils/AddressInput.js"
+import BalanceInput from "../utils/BalanceInput.js"
+import { provider, contracts } from "../../environment.js"
+import ArrayInput from '../utils/ArrayInput';
 
 const TokenType = {
     ETH: "ETH",
