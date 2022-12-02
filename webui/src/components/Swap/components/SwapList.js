@@ -1,6 +1,9 @@
 import React from "react"
 import PairSwapAny from "./PairSwapAny"
 import PairSwapSpecific from "./PairSwapSpecific"
+import RobustPairSwapAny from "./RobustPairSwapAny"
+import RobustPairSwapSpecific from "./RobustPairSwapSpecific"
+
 
 
 const SwapList = ({
@@ -24,6 +27,25 @@ const SwapList = ({
         }
     }
 
+    const onAddhandler = () => {
+        switch (inputType) {
+            case "PairSwapAny":
+                return onChange([...swapList, { pair: "", numItems: 0 }])
+            case "PairSwapSpecific":
+                return onChange([...swapList, { pair: "", nftIds: [], flag: false, flagTitle: "Set approval for all" }])
+            case "RobustPairSwapAny":
+                return onChange([...swapList, { swapInfo: { pair: "", numItems: 0 }, maxCost: 0 }])
+            case "RobustPairSwapSpecific":
+                return onChange([...swapList, { swapInfo: { pair: "", nftIds: [], flag: false, flagTitle: "Set approval for all" }, maxCost: 0 }])
+        }
+    }
+
+    React.useEffect(() => {
+        if (swapList.length < 1) {
+            onAddhandler()
+        }
+    }, [swapList])
+
     return (
         <div style={{
             margin: 5, minWidth: 500,
@@ -38,28 +60,30 @@ const SwapList = ({
 
                 <span style={{ flex: 1 }} />
 
-                <button onClick={() => {
-                    switch (inputType) {
-                        case "PairSwapAny":
-                            return onChange([...swapList, { pair: "", numItems: 0 }])
-                        case "PairSwapSpecific":
-                            return onChange([...swapList, { pair: "", nftIds: [] }])
-                    }
-                }}>Add</button>
+                <button onClick={onAddhandler}>Add</button>
             </div>
 
             <div style={{ overflow: "auto", flex: 1, scrollbarWidth: "none", margin: 5 }}>
                 {
                     swapList.map((arg, index) => {
                         return (
-                            <div key={index} style={{ display: "flex", padding: 5, border: "solid", borderWidth: 1, borderColor: "green"  }}>
+                            <div key={index} style={{ display: "flex", padding: 5, border: "solid", borderWidth: 1, borderColor: "green" }}>
                                 {
                                     inputType == "PairSwapAny" ? (
                                         <PairSwapAny value={arg} onChange={onChangeHandler(index)} />
                                     ) :
                                         inputType == "PairSwapSpecific" ? (
                                             <PairSwapSpecific value={arg} onChange={onChangeHandler(index)} />
-                                        ) : null
+
+                                        ) :
+                                            inputType == "RobustPairSwapAny" ? (
+                                                <RobustPairSwapAny value={arg} onChange={onChangeHandler(index)} />
+
+                                            ) :
+                                                inputType == "RobustPairSwapSpecific" ? (
+                                                    <RobustPairSwapSpecific value={arg} onChange={onChangeHandler(index)} />
+                                                )
+                                                    : null
                                 }
                                 <button onClick={onCloseHandler(index)}>x</button>
                             </div>

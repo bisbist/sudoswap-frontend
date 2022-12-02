@@ -4,15 +4,15 @@ import { provider, contracts } from '../../environment'
 import SwapList from './components/SwapList'
 
 
-const SwapETHForAnyNFTs = ({
+const RobustSwapETHForAnyNFTs = ({
     router: { name: routerName, createContract: createRouterContract },
 }) => {
 
-    const [swapList, setSwapList] = React.useState([])     // PairSwapAny[] swapList
-    const [ethRecipient, setETHRecipient] = React.useState("")    // address payable ethRecipient
+    const [swapList, setSwapList] = React.useState([])     // RobustPairSwapAny[] swapList
     const [nftRecipient, setNFTRecipient] = React.useState("")    // address nftRecipient
+    const [ethRecipient, setETHRecipient] = React.useState("")    // address nftRecipient
     const [deadline, setDeadline] = React.useState("0")    // uint256 deadline
-    const [amount, setAmount] = React.useState("0")    // uint256 deadline
+    const [ethAmount, setEthAmount] = React.useState("0")
 
     return (
         <div>
@@ -27,6 +27,17 @@ const SwapETHForAnyNFTs = ({
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>ETH Amount</td>
+                        <td>
+                            <input
+                                style={{ width: "97.5%" }}
+                                type="number" step={0.001} min={0}
+                                value={ethAmount}
+                                onChange={event => setEthAmount(event.target.value)} />
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>ETH Recipient</td>
                         <td>
@@ -58,23 +69,11 @@ const SwapETHForAnyNFTs = ({
                         </td>
                     </tr>
 
-                    <tr>
-                        <td>Amount</td>
-                        <td>
-                            <input
-                                style={{ width: "97.5%" }}
-                                type="number" step={0.001} min={0}
-                                value={amount}
-                                onChange={event => {
-                                    setAmount(event.target.value)
-                                }} />
-                        </td>
-                    </tr>
                 </tbody>
             </table>
 
             <SwapList
-                type="PairSwapAny"
+                type="RobustPairSwapAny"
                 swapList={swapList}
                 onChange={swapList => {
                     console.log(swapList)
@@ -87,7 +86,6 @@ const SwapETHForAnyNFTs = ({
                     await provider.send("eth_requestAccounts"); // connect specific metamask wallet with this site\
 
                     const signer = provider.getSigner()
-                    console.log(signer)
 
                     const router = createRouterContract(signer)
 
@@ -95,17 +93,17 @@ const SwapETHForAnyNFTs = ({
                         deadline: Date.now() + Math.floor(1000 * parseFloat(deadline)),
                         ethRecipient: ethRecipient != "" ? ethRecipient : await signer.getAddress(),
                         nftRecipient: nftRecipient != "" ? nftRecipient : await signer.getAddress(),
-                        swapList: swapList.map(swap => [swap.pair, swap.numItems]),
+                        swapList: swapList.map(swap => [ [swap.swapInfo.pair, swap.swapInfo.numItems],ethers.utils.parseEther(swap.maxCost),]),
                     }
 
-                    let txn = await router.swapETHForAnyNFTs(
+                    let txn = await router.robustSwapETHForAnyNFTs(
                         params.swapList,
                         params.ethRecipient,
                         params.nftRecipient,
                         params.deadline,
                         {
-                            value: ethers.utils.parseEther(amount),
                             gasLimit: 30000000,
+
                         }
                     )
 
@@ -120,4 +118,4 @@ const SwapETHForAnyNFTs = ({
 }
 
 
-export default SwapETHForAnyNFTs
+export default RobustSwapETHForAnyNFTs
