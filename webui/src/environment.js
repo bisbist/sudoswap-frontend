@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import config from './config.js';
 
-export const provider = new ethers.providers.Web3Provider(window.ethereum);
+export const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
 export const contracts = {
     ERC20(address, signer) {
