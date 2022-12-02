@@ -282,7 +282,9 @@ const PoolCreator = () => {
                                     ethers.utils.parseEther(params.spotPrice),
                                     params.initialNFTIDs,
                                     {
-                                        value: ethers.utils.parseEther(params.initialBalance),
+                                        ...(params.initialBalance ? {
+                                            value: ethers.utils.parseEther(params.initialBalance),
+                                        } : {}),
                                         gasLimit: 3000000,
                                     }
                                 )
@@ -299,7 +301,7 @@ const PoolCreator = () => {
                                     params.initialNFTIDs,
                                     ethers.utils.parseEther(params.initialBalance),
                                     {
-                                        gasLimit: 3000000,
+                                        gasLimit: 30000000,
                                     }
                                 ])
                             }
