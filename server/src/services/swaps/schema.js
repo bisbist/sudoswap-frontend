@@ -1,11 +1,18 @@
 import mongoose, { Schema } from 'mongoose'
 
+
+const BigNumberSchemaType = {
+  type: Schema.Types.Long,
+  transform: value => value.toString(),
+}
+
 const SwapSchema = new Schema({
-  pairAddress: Schema.Types.ObjectId,
-  blockNumber: Schema.Types.Long,
+  pairAddress: String,
+  blockNumber: BigNumberSchemaType,
+  txTimestamp: BigNumberSchemaType,
   txHash: String,
   txIndex: Number,
-  logIndex: Schema.Types.Number,
+  logIndex: Number,
   type: String,
 })
 

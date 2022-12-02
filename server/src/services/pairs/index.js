@@ -30,7 +30,17 @@ const fetchPairDetailsAndSave = async (event) => {
         bondingCurve,
         nft,
         poolType,
-        { from: owner },
+        { timestamp },
+        {
+            type: txType,
+            from: owner,
+            nonce: txNonce,
+            value: txValue,
+            gasLimit: txGasLimit,
+            gasPrice: txGasPrice,
+            maxFeePerGas: txMaxFeePerGas,
+            maxPriorityFeePerGas: txMaxPriorityFeePerGas,
+        },
         ethBalance,
         tokenBalance,
     ] = await Promise.all([
@@ -41,14 +51,14 @@ const fetchPairDetailsAndSave = async (event) => {
         contract.bondingCurve(),
         contract.nft(),
         contract.poolType(),
+        event.getBlock(),
         event.getTransaction(),
         provider.getBalance(address),
         tokenBalancePromise,
     ])
-
     let pair = await Pair.findOne({ address })
     if (!pair) {
-        const { 
+        const {
             blockNumber, transactionHash: txHash,
             transactionIndex: txIndex, logIndex } = event
         pair = new Pair({
@@ -66,23 +76,29 @@ const fetchPairDetailsAndSave = async (event) => {
             tokenBalance,
             ethBalance,
             blockNumber,
+            logIndex,
+            txType,
             txHash,
             txIndex,
-            logIndex,
+            timestamp,
+            txValue,
+            txNonce,
+            txGasLimit,
+            txGasPrice,
+            txMaxFeePerGas,
+            txMaxPriorityFeePerGas
         })
     }
 
     await pair.save()
 }
 
-
-
 // fetch existing NewPair events from blockchain
 const fetchMissingPairs = async (db) => {
     const pairs = await Pair.find().sort({ blockNumber: -1 }).limit(1)
 
     const blockNumber = Math.max(
-        pairs.length > 0 ? pairs[0].blockNumber : 0, provider.blockNumber - 1000) // - 3015)
+        pairs.length > 0 ? pairs[0].blockNumber : 0, provider.blockNumber - 2500) // - 3015)
 
     const factoryContract = contracts.PairFactory()
 
@@ -113,11 +129,11 @@ const fetchPairUpdates = (db) => {
     const eventHandlers = [{
         filter: pairContract.filters.SpotPriceUpdate(), // spotPrice
         handle: async event => {
-            const pair = await Pair.findOne(event.address)
+            const pair = await Pair.findOne({ address: event.address })
             if (pair) {
-                pair.spotPrice = event.args.newSpotPrice
-                const res = await pair.save()
-                console.log(res)
+                const contract = contracts.Pair(pair.address)
+                pair.spotPrice = await contract.spotPrice()
+                await pair.save()
             }
         },
     },
@@ -142,33 +158,33 @@ const fetchPairUpdates = (db) => {
     {
         filter: pairContract.filters.DeltaUpdate(), // delta
         handle: async event => {
-            const pair = await Pair.findOne(event.address)
+            const pair = await Pair.findOne({ address: event.address })
             if (pair) {
-                pair.delta = event.args.newDelta
-                const res = await pair.save()
-                console.log(res)
+                const contract = contracts.Pair(pair.address)
+                pair.delta = await contract.delta()
+                await pair.save()
             }
         },
     },
     {
         filter: pairContract.filters.FeeUpdate(), // fee
         handle: async event => {
-            const pair = await Pair.findOne(event.address)
+            const pair = await Pair.findOne({ address: event.address })
             if (pair) {
-                pair.fee = event.args.newFee
-                const res = await pair.save()
-                console.log(res)
+                const contract = contracts.Pair(pair.address)
+                pair.fee = await contract.fee()
+                await pair.save()
             }
         },
     },
     {
         filter: pairContract.filters.AssetRecipientChange(),  // assetRecipient
         handle: async event => {
-            const pair = await Pair.findOne(event.address)
+            const pair = await Pair.findOne({ address: event.address })
             if (pair) {
-                pair.assetRecipient = event.args.a
-                const res = await pair.save()
-                console.log(res)
+                const contract = contracts.Pair(pair.address)
+                pair.assetRecipient = await contract.assetRecipient()
+                await pair.save()
             }
         },
     }]
@@ -176,7 +192,7 @@ const fetchPairUpdates = (db) => {
     eventHandlers.forEach(evh => {
         provider.on({ ...evh.filter, address: null }, async (...events) => {
             await Promise.all(
-                events.map(async event => {
+                events.map(async (event) => {
                     const pair = await Pair.findOne({ address: event.address })
                     const evh = eventHandlers.find(ecb => {
                         return ecb.filter.topics[0] == event.topics[0]

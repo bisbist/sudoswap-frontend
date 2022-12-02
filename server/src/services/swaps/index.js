@@ -1,43 +1,75 @@
-
-import { ethers } from 'ethers'
-import config from '../../config.js';
 import { provider, contracts } from "../../envionment.js"
 import Swap from './schema.js'
 import { Pair } from "../pairs"
+import { Variant } from '../pairs/schema.js';
 
+
+// TODO: not working!
+// fetch existing swap events from blockchain
+const fetchMissingSwaps = async () => {
+    const swaps = await Swap.find().sort({ blockNumber: -1 }).limit(1)
+
+    const blockNumber = Math.max(
+        swaps.length > 0 ? swaps[0].blockNumber : 0, provider.blockNumber - 1500) // - 3015)
+
+    const pairContract = contracts.Pair()
+
+    // SwapNFTOutPair
+    const [swapNFTInPairEvents, swapNFTOutPairEvents] = await Promise.all([
+        provider.getLogs({ ...pairContract.filters.SwapNFTInPair(), address: null }),
+        provider.getLogs({ ...pairContract.filters.SwapNFTOutPair(), address: null }),
+    ])
+
+    console.log(swapNFTInPairEvents, swapNFTOutPairEvents)
+
+    const handleSwapNFTInPair = swapEventHandler("SwapNFTInPair")
+    const handleSwapNFTOutPair = swapEventHandler("SwapNFTOutPair")
+
+    for (let event of swapNFTInPairEvents) {
+        await handleSwapNFTInPair(event)
+    }
+
+    for (let event of swapNFTOutPairEvents) {
+        await handleSwapNFTOutPair(event)
+    }
+
+}
 
 const swapEventHandler = (swapType) => {
     return async (event) => {
-        const pair = await Pair.findOne(event.address)
+        const pair = await Pair.findOne({ address: event.address })
         if (pair) {
-            const pc = new ethers.Contract(pair.address, config.Pair.abi, provider)
+
+            const { blockNumber, txIndex, 
+                logIndex, transactionHash: txHash } = event
+            
             const [
-                spotPrice, ethBalance, tokenBalance,
+                ethBalance, tokenBalance,
             ] = await Promise.all([
-                pc.spotPrice(),
                 provider.getBalance(pair.address),
-                0,
+                [Variant.ENUMERABLE_ERC20, Variant.MISSING_ENUMERABLE_ERC20].includes(pair.variant) ?
+                    contracts.ERC20(pair.token).balanceOf(pair.address) :
+                    0,
+                
             ])
 
-            Object.assign(pair, { spotPrice, ethBalance, tokenBalance })
+            Object.assign(pair, { ethBalance, tokenBalance })
 
-            const res = await pair.save()
-            console.log(res)
-
-            const resw = await Swap.create({
+            await pair.save()
+            await Swap.create({
                 type: swapType,
-                blockNumber: event.blockNumber,
-                txHash: event.transactionHash,
-                txIndex: event.txIndex,
-                logIndex: event.logIndex,
+                blockNumber,
+                txHash,
+                txIndex,
+                logIndex,
             })
-            console.log(resw)
         }
     }
 }
 
 
 const fetchSwapUpdates = () => {
+    fetchMissingSwaps()
 
     const pairContract = contracts.Pair()
 
