@@ -17,7 +17,7 @@ After creating or generating the `.env` file, start the server using,
 
 ```bash
 cd server
-node src/index.js
+yarn start
 ```
 
 This will start a development API server that will be used by the React frontend app.
