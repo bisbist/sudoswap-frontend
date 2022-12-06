@@ -4,10 +4,10 @@ import { provider, contracts } from '../../environment'
 import SwapNFTsForToken from './SwapNFTsForToken'
 import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
 import RobustSwapETHForAnyNFTs from './RobustSwapETHForAnyNFTs'
-import RobustSwapETHForSpecificNFTs from './RobustSwapETHForSpecificNFTs'
+import RobustSwapNFTsForToken from './RobustSwapNFTsForToken'
 // import RobustSwapERC20ForAnyNFTs from './RobustSwapERC20ForAnyNFTs'
-// import SwapERC20ForSpecificNFTs from './SwapERC20ForSpecificNFTs'
-// import SwapERC20ForAnyNFTs from './SwapERC20ForAnyNFTs'
+import SwapERC20ForSpecificNFTs from './SwapERC20ForSpecificNFTs'
+import SwapERC20ForAnyNFTs from './SwapERC20ForAnyNFTs'
 
 
 
@@ -174,12 +174,27 @@ const Swap = () => {
                             createContract: routers[routerName].createContract,
                         }} />
 
-                    ) : swapType == Types.RobustSwapETHForSpecificNFTs ? (
-                        <RobustSwapETHForSpecificNFTs router={{
+                    ) : swapType == Types.SwapERC20ForAnyNFTs ? (
+                        <SwapERC20ForAnyNFTs router={{
                             name: routerName,
                             createContract: routers[routerName].createContract,
                         }} />
-                    ) : null
+                    ) : swapType == Types.SwapERC20ForAnyNFTs ? (
+                        <SwapERC20ForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.SwapERC20ForSpecificNFTs ? (
+                        <SwapERC20ForSpecificNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.RobustSwapNFTsForToken ? (
+                        <RobustSwapNFTsForToken router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ): null
                 }
 
             </div>
