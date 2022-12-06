@@ -2,9 +2,11 @@ import React from "react"
 
 
 const PairSwapSpecific = ({
-    value: { pair, nftIds },
+    value: { pair, nftIds, flag, flagTitle },
     onChange,
 }) => {
+    const value = { pair, nftIds, flag, flagTitle }
+
     return (
         <div style={{ width: "100%", display: "flex" }}>
             <input
@@ -12,14 +14,21 @@ const PairSwapSpecific = ({
                 value={pair}
                 placeholder="Pair Address"
                 onChange={event => {
-                    onChange({ nftIds, pair: event.target.value })
+                    onChange({ ...value, pair: event.target.value })
                 }} />
             <input
                 style={{ flex: 1 }}
                 value={nftIds.join(",")}
                 placeholder="NFT IDs (CSV)"
                 onChange={event => {
-                    onChange({ pair, nftIds: event.target.value.split(",") })
+                    onChange({ ...value, nftIds: event.target.value.split(",") })
+                }} />
+            <input
+                type='checkbox'
+                checked={flag}
+                title={flagTitle}
+                onChange={event => {
+                    onChange({ ...value, flag: event.target.checked })
                 }} />
         </div>
     )
