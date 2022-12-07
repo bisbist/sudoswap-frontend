@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-example}
+    volumes:
+      - ${PWD}/data/db:/data/db
+    healthcheck:
+      test: ["CMD","mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  app:
+    build: .
+    image: app
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://root:example@db:27017}
+    volumes:
+      - ${PWD}/server/.env:/server/.env
+    depends_on:
+      db:
+        condition: service_healthy
