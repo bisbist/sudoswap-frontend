@@ -1,6 +1,6 @@
 import { provider, contracts } from "../../envionment.js"
 import Swap from './schema.js'
-import { Pair } from "../pairs"
+import { Pair } from "../pairs/index.js"
 import { Variant } from '../pairs/schema.js';
 
 
@@ -10,7 +10,7 @@ const fetchMissingSwaps = async () => {
     const swaps = await Swap.find().sort({ blockNumber: -1 }).limit(1)
 
     const blockNumber = Math.max(
-        swaps.length > 0 ? swaps[0].blockNumber : 0, provider.blockNumber - 1500) // - 3015)
+        swaps.length > 0 ? swaps[0].blockNumber : 0, await provider.getBlockNumber() - 2500) // - 3015)
 
     const pairContract = contracts.Pair()
 

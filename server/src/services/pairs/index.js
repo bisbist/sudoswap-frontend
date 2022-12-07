@@ -98,7 +98,7 @@ const fetchMissingPairs = async (db) => {
     const pairs = await Pair.find().sort({ blockNumber: -1 }).limit(1)
 
     const blockNumber = Math.max(
-        pairs.length > 0 ? pairs[0].blockNumber : 0, provider.blockNumber - 2500) // - 3015)
+        pairs.length > 0 ? pairs[0].blockNumber : 0, await provider.getBlockNumber() - 2500) // - 3015)
 
     const factoryContract = contracts.PairFactory()
 
