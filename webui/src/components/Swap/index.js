@@ -4,6 +4,7 @@ import { provider, contracts } from '../../environment'
 import SwapNFTsForToken from './SwapNFTsForToken'
 import RobustSwapNFTsForToken from './RobustSwapNFTsForToken'
 import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
+import SwapETHForSpecificNFTs from './SwapETHForSpecificNFTs'
 import RobustSwapETHForAnyNFTs from './RobustSwapETHForAnyNFTs'
 import SwapERC20ForAnyNFTs from './SwapERC20ForAnyNFTs'
 import SwapERC20ForSpecificNFTs from './SwapERC20ForSpecificNFTs'
@@ -16,8 +17,8 @@ import RobustSwapERC20ForSpecificNFTs from './RobustSwapERC20ForSpecificNFTs'
 const Types = {
     SwapNFTsForToken: "0",
     RobustSwapNFTsForToken: "1",
-    swapETHForAnyNFTs: "2",
-    // swapETHForSpecificNFTs: "3",
+    SwapETHForAnyNFTs: "2",
+    SwapETHForSpecificNFTs: "3",
     RobustSwapETHForAnyNFTs: "4",
     // RobustSwapETHForSpecificNFTs: "5",
     SwapERC20ForAnyNFTs: "5",
@@ -159,7 +160,7 @@ const Swap = () => {
 
                 {/* render swap component based on swap type */}
                 {
-                    swapType == Types.swapETHForAnyNFTs ? (
+                    swapType == Types.SwapETHForAnyNFTs ? (
                         <SwapETHForAnyNFTs router={{
                             name: routerName,
                             createContract: routers[routerName].createContract,
@@ -180,12 +181,7 @@ const Swap = () => {
                             name: routerName,
                             createContract: routers[routerName].createContract,
                         }} />
-                    ) : swapType == Types.SwapERC20ForAnyNFTs ? (
-                        <SwapERC20ForAnyNFTs router={{
-                            name: routerName,
-                            createContract: routers[routerName].createContract,
-                        }} />
-                    ) : swapType == Types.SwapERC20ForSpecificNFTs ? (
+                    ): swapType == Types.SwapERC20ForSpecificNFTs ? (
                         <SwapERC20ForSpecificNFTs router={{
                             name: routerName,
                             createContract: routers[routerName].createContract,
@@ -205,7 +201,13 @@ const Swap = () => {
                             name: routerName,
                             createContract: routers[routerName].createContract,
                         }} />
-                    )
+                    ) : swapType == Types.SwapETHForSpecificNFTs ? (
+                        <SwapETHForSpecificNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) 
+
                     : null
                 }
 
