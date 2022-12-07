@@ -3,16 +3,17 @@ import helmet from 'helmet'
 import express from 'express'
 import db from './db/mongo.js'
 import config from "./config.js"
-import { Pair, fetchPairUpdates } from './services/pairs'
-import { Swap, fetchSwapUpdates } from './services/swaps'
+import { Pair, fetchPairUpdates } from './services/pairs/index.js'
+import { Swap, fetchSwapUpdates } from './services/swaps/index.js'
 
 
 const app = express()
 
 app.use(cors()) // handle cross origin request
-app.use(helmet())
+// app.use(helmet())
 app.use(express.json())
 
+app.use(express.static("public")) // static files
 
 app.get("/config", async (req, res) => {
   res.json(config);
