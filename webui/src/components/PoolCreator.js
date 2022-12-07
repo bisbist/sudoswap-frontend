@@ -208,7 +208,6 @@ const PoolCreator = () => {
                                 // return
 
                                 if (!await erc721.isApprovedForAll(signerAddress, factory.address)) {
-                                    console.log("not here")
                                     if (state.setApprovalForAll) {
 
                                         let txn = await erc721.setApprovalForAll(factory.address, true)

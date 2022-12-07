@@ -4,11 +4,11 @@ import { provider, contracts } from '../../environment'
 import SwapList from './components/SwapList'
 
 
-const SwapERC20ForSpecificNFTs = ({
+const RobustSwapERC20ForSpecificNFTs = ({
     router: { name: routerName, createContract: createRouterContract },
 }) => {
 
-    const [swapList, setSwapList] = React.useState([])     // PairSwap[] swapList
+    const [swapList, setSwapList] = React.useState([])     // RobustPairSwapSpecific[] swapList
     const [nftRecipient, setNFTRecipient] = React.useState("")    // address nftRecipient
     const [deadline, setDeadline] = React.useState("0")    // uint256 deadline
     const [amount, setAmount] = React.useState("0")    // uint256 deadline
@@ -64,9 +64,10 @@ const SwapERC20ForSpecificNFTs = ({
             </table>
 
             <SwapList
-                type="PairSwapSpecific"
+                type="RobustPairSwapSpecific"
                 swapList={swapList}
                 onChange={swapList => {
+                    // prints the Swaplist
                     console.log(swapList)
                     setSwapList(swapList)
                 }} />
@@ -88,12 +89,14 @@ const SwapERC20ForSpecificNFTs = ({
                         deadline: Date.now() + Math.floor(1000 * parseFloat(deadline)),
                         nftRecipient: nftRecipient != "" ? nftRecipient : await signer.getAddress(),
                         swapList: await Promise.all(swapList.map(async function (swap) {
-                            const pair = contracts.pair(swap.pair)
+                            const pair = contracts.pair(swap.swapInfo.pair)
                             const nftAddress = await pair.nft()
                             const nft  = contracts.ERC721(nftAddress)
-                            console.log(await nft.ownerOf(swap.nftIds[0]))
+                            console.log(await nft.ownerOf(swap.swapInfo.nftIds[0]))
                             return [
-                                swap.pair, swap.nftIds
+                                [swap.swapInfo.pair, swap.swapInfo.nftIds],
+                                ethers.utils.parseEther(swap.maxCost)
+
                             ]
                         })),
                         inputAmount: ethers.utils.parseEther(amount),
@@ -101,7 +104,7 @@ const SwapERC20ForSpecificNFTs = ({
 
                     // ensure that all pairs have same ERC20 token
                     const getTokenAddr = async (swap) => {
-                        const pair = new ethers.Contract(swap.pair, ["function token() public pure returns (address _token)"], provider)
+                        const pair = new ethers.Contract(swap.swapInfo.pair, ["function token() public pure returns (address _token)"], provider)
                         return await pair.token()
                     }
                     const promises = swapList.map(getTokenAddr)
@@ -124,7 +127,7 @@ const SwapERC20ForSpecificNFTs = ({
 
 
                     // Create a swap transaction
-                    txn = await router.swapERC20ForSpecificNFTs(
+                    txn = await router.robustSwapERC20ForSpecificNFTs(
                         params.swapList,
                         params.inputAmount,
                         params.nftRecipient,
@@ -145,4 +148,4 @@ const SwapERC20ForSpecificNFTs = ({
 }
 
 
-export default SwapERC20ForSpecificNFTs
+export default RobustSwapERC20ForSpecificNFTs

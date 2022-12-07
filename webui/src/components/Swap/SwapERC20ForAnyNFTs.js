@@ -17,7 +17,7 @@ const SwapERC20ForAnyNFTs = ({
         <div>
             <table style={{
                 margin: 5, minWidth: 500,
-                border: 'solid', borderWidth: 1, borderColor: "red"
+                // border: 'solid', borderWidth: 1, borderColor: "red"
             }}>
                 <thead>
                     <tr>
