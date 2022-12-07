@@ -80,7 +80,7 @@ const setRouterAllowed = async (routerAddress, allowed) => {
 console.log("The code reached here...")
 
 const Swap = () => {
-    const [swapType, setSwapType] = React.useState(Types.swapETHForAnyNFTs)
+    const [swapType, setSwapType] = React.useState(Types.SwapETHForAnyNFTs)
     const [routerName, setRouterName] = React.useState("default")
     const [routers, setRouters] = React.useState({
         default: { address: "", allowed: false, createContract: (signer) => contracts.router(null, signer) },
