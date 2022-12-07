@@ -77,6 +77,8 @@ const setRouterAllowed = async (routerAddress, allowed) => {
     return await factory.swapAllowed(routerAddress)
 }
 
+console.log("The code reached here...")
+
 const Swap = () => {
     const [swapType, setSwapType] = React.useState(Types.swapETHForAnyNFTs)
     const [routerName, setRouterName] = React.useState("default")
