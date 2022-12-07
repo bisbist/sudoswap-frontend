@@ -14,7 +14,7 @@ const RobustSwapNFTsForToken = ({
     router: { name: routerName, createContract: createRouterContract },
 }) => {
 
-    const [swapList, setSwapList] = React.useState([])     // PairSwapAny[] swapList
+    const [swapList, setSwapList] = React.useState([])     // RobustPairSwapSpecificForToken[] swapList
     const [tokenRecipient, setTokenRecipient] = React.useState("")    // address payable ethRecipient
     const [deadline, setDeadline] = React.useState("0")    // uint256 deadline
     const [minOutput, setMinoutput] = React.useState("0")    // uint256 deadline
@@ -24,7 +24,7 @@ const RobustSwapNFTsForToken = ({
         <div>
             <table style={{
                 margin: 5, minWidth: 500,
-                border: 'solid', borderWidth: 1, borderColor: "red"
+                // border: 'solid', borderWidth: 1, borderColor: "red"
             }}>
                 <thead>
                     <tr>

@@ -19,11 +19,11 @@ const Types = {
     swapETHForAnyNFTs: "2",
     // swapETHForSpecificNFTs: "3",
     RobustSwapETHForAnyNFTs: "4",
-    RobustSwapETHForSpecificNFTs: "5",
-    SwapERC20ForAnyNFTs: "6",
-    SwapERC20ForSpecificNFTs: "7",
-    RobustSwapERC20ForAnyNFTs: "8",
-    RobustSwapERC20ForSpecificNFTs: "9",
+    // RobustSwapETHForSpecificNFTs: "5",
+    SwapERC20ForAnyNFTs: "5",
+    SwapERC20ForSpecificNFTs: "6",
+    RobustSwapERC20ForAnyNFTs: "7",
+    RobustSwapERC20ForSpecificNFTs: "8",
 }
 
 const initializeRouters = async (defaultRouters) => {
@@ -98,7 +98,7 @@ const Swap = () => {
                 margin: 5,
             }}>
                 <table style={{
-                    margin: 5, minWidth: 500, border: 'solid',
+                    // margin: 5, minWidth: 500, border: 'solid',
                     borderWidth: 1, borderColor: "red"
                 }}>
                     <thead>

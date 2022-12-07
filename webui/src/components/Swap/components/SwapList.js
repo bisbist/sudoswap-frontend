@@ -49,7 +49,7 @@ const SwapList = ({
     return (
         <div style={{
             margin: 5, minWidth: 500,
-            border: 'solid', borderWidth: 1, borderColor: "red",
+            // border: 'solid', borderWidth: 1, borderColor: "red",
             height: 100,
             maxHeight: 100,
             display: "flex",

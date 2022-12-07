@@ -8,7 +8,7 @@ const SwapERC20ForSpecificNFTs = ({
     router: { name: routerName, createContract: createRouterContract },
 }) => {
 
-    const [swapList, setSwapList] = React.useState([])     // PairSwapAny[] swapList
+    const [swapList, setSwapList] = React.useState([])     // PairSwap[] swapList
     const [nftRecipient, setNFTRecipient] = React.useState("")    // address nftRecipient
     const [deadline, setDeadline] = React.useState("0")    // uint256 deadline
     const [amount, setAmount] = React.useState("0")    // uint256 deadline
@@ -17,7 +17,7 @@ const SwapERC20ForSpecificNFTs = ({
         <div>
             <table style={{
                 margin: 5, minWidth: 500,
-                border: 'solid', borderWidth: 1, borderColor: "red"
+                // border: 'solid', borderWidth: 1, borderColor: "red"
             }}>
                 <thead>
                     <tr>
@@ -49,7 +49,7 @@ const SwapERC20ForSpecificNFTs = ({
                     </tr>
 
                     <tr>
-                        <td>Amount</td>
+                        <td>Input Amount</td>
                         <td>
                             <input
                                 style={{ width: "97.5%" }}
@@ -74,11 +74,6 @@ const SwapERC20ForSpecificNFTs = ({
             <div style={{ textAlign: "center" }}>
                 <button onClick={async () => {
 
-                    // console.log(ethers.utils.isAddress("0xAbB608121Fd652F112827724B28a61e09f2dcDf4"))
-
-                    // return
-
-                    // connect specific metamask wallet with this site\
                     await provider.send("eth_requestAccounts");
 
                     const signer = provider.getSigner()
