@@ -7,7 +7,9 @@ import SwapETHForAnyNFTs from './SwapETHForAnyNFTs'
 import RobustSwapETHForAnyNFTs from './RobustSwapETHForAnyNFTs'
 import SwapERC20ForAnyNFTs from './SwapERC20ForAnyNFTs'
 import SwapERC20ForSpecificNFTs from './SwapERC20ForSpecificNFTs'
-// import RobustSwapERC20ForAnyNFTs from './RobustSwapERC20ForAnyNFTs'
+import RobustSwapERC20ForAnyNFTs from './RobustSwapERC20ForAnyNFTs'
+import RobustSwapERC20ForSpecificNFTs from './RobustSwapERC20ForSpecificNFTs'
+
 
 
 
@@ -20,8 +22,8 @@ const Types = {
     RobustSwapETHForSpecificNFTs: "5",
     SwapERC20ForAnyNFTs: "6",
     SwapERC20ForSpecificNFTs: "7",
-    // RobustSwapERC20ForAnyNFTs: "8",
-    // RobustSwapERC20ForSpecificNFTs: "9",
+    RobustSwapERC20ForAnyNFTs: "8",
+    RobustSwapERC20ForSpecificNFTs: "9",
 }
 
 const initializeRouters = async (defaultRouters) => {
@@ -193,7 +195,18 @@ const Swap = () => {
                             name: routerName,
                             createContract: routers[routerName].createContract,
                         }} />
-                    ): null
+                    ) : swapType == Types.RobustSwapERC20ForAnyNFTs ? (
+                        <RobustSwapERC20ForAnyNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    ) : swapType == Types.RobustSwapERC20ForSpecificNFTs ? (
+                        <RobustSwapERC20ForSpecificNFTs router={{
+                            name: routerName,
+                            createContract: routers[routerName].createContract,
+                        }} />
+                    )
+                    : null
                 }
 
             </div>
