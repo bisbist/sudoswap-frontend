@@ -102,8 +102,8 @@ const Swap = () => {
                 margin: 5,
             }}>
                 <table style={{
-                    // margin: 5, minWidth: 500, border: 'solid',
-                    borderWidth: 1, borderColor: "red"
+                    margin: 5, minWidth: 500, 
+                    // border: 'solid', borderWidth: 1, borderColor: "red"
                 }}>
                     <thead>
                         <tr>
