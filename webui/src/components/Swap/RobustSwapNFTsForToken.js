@@ -99,7 +99,8 @@ const RobustSwapNFTsForToken = ({
                                     isApprovedForAll(signerAddress, router.address)
 
                                 if (!isApprovedForAll) {
-                                    await nft.setApprovalForAll(router.address, true)
+                                    const tnx = await nft.setApprovalForAll(router.address, true)
+                                    await tnx.wait()
                                 }
                             } else {
                                 for (let nftId of swap.nftIds) {
