@@ -81,6 +81,7 @@ const RobustSwapERC20ForAnyNFTs = ({
 
       <div style={{ textAlign: "center" }}>
         <button
+          type="button"
           onClick={async () => {
             // connect specific metamask wallet with this site\
             await provider.send("eth_requestAccounts");
