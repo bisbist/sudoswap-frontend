@@ -1120,6 +1120,31 @@
     classnames "^2.3.1"
     tslib "~2.3.1"
 
+"@blueprintjs/popover2@^1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-1.10.2.tgz#88bd233fc87db838ba337ad9c6a55566cef8678a"
+  integrity sha512-+7qBKpiN10tfRE1Rz2RKTzNoweALQ4nlAWTmXjK+gEieEN7esXrhQ4kiK6qY3bRBb4Yi7cJ4MQ3PpJ1E4s/2RQ==
+  dependencies:
+    "@blueprintjs/core" "^4.13.0"
+    "@juggle/resize-observer" "^3.4.0"
+    "@popperjs/core" "^2.11.6"
+    classnames "^2.3.1"
+    dom4 "^2.1.5"
+    react-popper "^2.3.0"
+    tslib "~2.3.1"
+
+"@blueprintjs/table@^4.7.10":
+  version "4.7.10"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/table/-/table-4.7.10.tgz#c556fd0d88b02790ab66f9a082765bb75330767d"
+  integrity sha512-Z9G3AiPVR73QB6TgozXB5E5B4DXzeYk8bUMeOU3GtP1YmJdGdCZ9/sa64g/KViaUdwBwnqR8yKHnUF4kMLBDsw==
+  dependencies:
+    "@blueprintjs/core" "^4.13.0"
+    "@blueprintjs/popover2" "^1.10.2"
+    classnames "^2.3.1"
+    prop-types "^15.7.2"
+    react-innertext "^1.1.5"
+    tslib "~2.3.1"
+
 "@csstools/normalize.css@*":
   version "12.0.0"
   resolved "https://registry.npmjs.org/@csstools/normalize.css/-/normalize.css-12.0.0.tgz"
@@ -1994,6 +2019,11 @@
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
     source-map "^0.7.3"
+
+"@popperjs/core@^2.11.6":
+  version "2.11.6"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
+  integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
 
 "@remix-run/router@1.0.3":
   version "1.0.3"
@@ -7839,7 +7869,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.8.1:
+prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7977,10 +8007,20 @@ react-error-overlay@^6.0.11:
   resolved "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-6.0.11.tgz"
   integrity sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==
 
+react-fast-compare@^3.0.1:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
+  integrity sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==
+
 react-icons@^4.6.0:
   version "4.6.0"
   resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.6.0.tgz"
   integrity sha512-rR/L9m9340yO8yv1QT1QurxWQvWpbNHqVX0fzMln2HEb9TEIrQRGsqiNFQfiv9/JEUbyHmHPlNTB2LWm2Ttz0g==
+
+react-innertext@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/react-innertext/-/react-innertext-1.1.5.tgz#8147ac54db3f7067d95f49e2d2c05a720d27d8d0"
+  integrity sha512-PWAqdqhxhHIv80dT9znP2KvS+hfkbRovFp4zFYHFFlOoQLRiawIic81gKb3U1wEyJZgMwgs3JoLtwryASRWP3Q==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
@@ -8008,6 +8048,14 @@ react-popper@^1.3.11:
     popper.js "^1.14.4"
     prop-types "^15.6.1"
     typed-styles "^0.0.7"
+    warning "^4.0.2"
+
+react-popper@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.3.0.tgz#17891c620e1320dce318bad9fede46a5f71c70ba"
+  integrity sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==
+  dependencies:
+    react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
 react-refresh@^0.11.0:
