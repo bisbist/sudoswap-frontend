@@ -69,7 +69,7 @@ const PoolsTable = ({ onPairClick }) => {
     return pairs[rowIndex][key];
   };
 
-  const cellRenderer = (rowIndex, columnIndex) => {
+  const defaultCellRenderer = (rowIndex, columnIndex) => {
     const value = getRowValue(rowIndex, columnIndex);
     return <Cell>{value}</Cell>;
   };
@@ -122,7 +122,7 @@ const PoolsTable = ({ onPairClick }) => {
     return <Cell>{value}</Cell>;
   };
 
-  const sportPriceCellRenderer = (rowIndex, columnIndex) => {
+  const spotPriceCellRenderer = (rowIndex, columnIndex) => {
     const value = getRowValue(rowIndex, columnIndex);
     if (!value) return <Cell></Cell>;
     return (
@@ -150,27 +150,27 @@ const PoolsTable = ({ onPairClick }) => {
       <HotkeysProvider>
         <Table numRows={pairs.length}>
           <Column name="Time" cellRenderer={timestampCellRender} />
-          <Column name="Block" cellRenderer={cellRenderer} />
-          <Column name="Address" cellRenderer={cellRenderer} />
+          <Column name="Block" cellRenderer={defaultCellRenderer} />
+          <Column name="Address" cellRenderer={defaultCellRenderer} />
           <Column name="Variant" cellRenderer={variantCellRenderer} />
           <Column name="ETH Balance" cellRenderer={valueCellRenderer} />
-          <Column name="Token" cellRenderer={cellRenderer} />
+          <Column name="Token" cellRenderer={defaultCellRenderer} />
           <Column name="Token Balance" cellRenderer={valueCellRenderer} />
           <Column name="Spot Price" cellRenderer={valueCellRenderer} />
           <Column name="Delta" cellRenderer={valueCellRenderer} />
           <Column name="Fee" cellRenderer={valueCellRenderer} />
-          <Column name="Type" cellRenderer={cellRenderer} />
-          <Column name="NFT" cellRenderer={cellRenderer} />
-          <Column name="Owner" cellRenderer={cellRenderer} />
-          <Column name="Bonding Curve" cellRenderer={cellRenderer} />
-          <Column name="Asset Recipient" cellRenderer={cellRenderer} />
-          <Column name="LogIndex" cellRenderer={cellRenderer} />
-          <Column name="TxType" cellRenderer={cellRenderer} />
-          <Column name="TxHash" cellRenderer={cellRenderer} />
-          <Column name="TxIndex" cellRenderer={cellRenderer} />
+          <Column name="Type" cellRenderer={defaultCellRenderer} />
+          <Column name="NFT" cellRenderer={defaultCellRenderer} />
+          <Column name="Owner" cellRenderer={defaultCellRenderer} />
+          <Column name="Bonding Curve" cellRenderer={defaultCellRenderer} />
+          <Column name="Asset Recipient" cellRenderer={defaultCellRenderer} />
+          <Column name="LogIndex" cellRenderer={defaultCellRenderer} />
+          <Column name="TxType" cellRenderer={defaultCellRenderer} />
+          <Column name="TxHash" cellRenderer={defaultCellRenderer} />
+          <Column name="TxIndex" cellRenderer={defaultCellRenderer} />
           <Column name="TxValue" cellRenderer={valueCellRenderer} />
-          <Column name="TxNonce" cellRenderer={cellRenderer} />
-          <Column name="TxGasLimit" cellRenderer={cellRenderer} />
+          <Column name="TxNonce" cellRenderer={defaultCellRenderer} />
+          <Column name="TxGasLimit" cellRenderer={defaultCellRenderer} />
           <Column name="TxGasPrice" cellRenderer={gweiCellRenderer} />
           <Column name="TxMaxFeePerGas" cellRenderer={gweiCellRenderer} />
           <Column
@@ -182,99 +182,6 @@ const PoolsTable = ({ onPairClick }) => {
     </div>
   );
 
-  return (
-    <div style={{ overflow: "auto" }}>
-      <table style={{ padding: 10 }}>
-        <thead>
-          <tr>
-            <th style={{ minWidth: 200 }}>Time</th>
-            <th>Block</th>
-            <th>Address</th>
-            <th>Variant</th>
-            <th>ETH Balance</th>
-            <th>Token</th>
-            <th>Token Balance</th>
-            <th>Spot Price</th>
-            <th>Delta</th>
-            <th>Fee</th>
-            <th>Type</th>
-            <th>NFT</th>
-            <th>Owner</th>
-            <th>Bonding Curve</th>
-            <th>Asset Recipient</th>
-            <th>LogIndex</th>
-            <th>TxType</th>
-            <th>TxHash</th>
-            <th>TxIndex</th>
-            <th>TxValue</th>
-            <th>TxNonce</th>
-            <th>TxGasLimit</th>
-            <th>TxGasPrice</th>
-            <th>TxMaxFeePerGas</th>
-            <th>TxMaxPriorityFeePerGas</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pairs.map((pair, index) => {
-            return (
-              <tr key={index}>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.timestamp}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.blockNumber}</td>
-                <td
-                  style={{ padding: "0 10px 0 10px", cursor: "pointer" }}
-                  onClick={(event) => {
-                    onPairClick(pair.address);
-                  }}
-                >
-                  <tt>{pair.address}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.variant}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.ethBalance}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.token}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  {pair.tokenBalance}
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.spotPrice}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.delta}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.fee}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.poolType}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.nft}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.owner}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.bondingCurve}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.assetRecipient}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.logIndex}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.txType}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  <tt>{pair.txHash}</tt>
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.txIndex}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.txValue}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.txNonce}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.txGasLimit}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>{pair.txGasPrice}</td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  {pair.txMaxFeePerGas}
-                </td>
-                <td style={{ padding: "0 10px 0 10px" }}>
-                  {pair.txMaxPriorityFeePerGas}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
 };
 
 export default PoolsTable;
