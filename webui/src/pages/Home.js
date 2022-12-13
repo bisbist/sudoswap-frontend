@@ -1,7 +1,7 @@
 import React from 'react';
 import Swap from '../components/Swap';
 import PoolCreator from '../components/PoolCreator';
-import PoolsTable from '../components/PoolsTable';
+import PoolsTable from '../components/NewPoolsTable';
 
 
 const Home = () => {
