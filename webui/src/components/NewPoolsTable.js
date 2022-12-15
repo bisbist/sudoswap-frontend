@@ -263,7 +263,7 @@ const PoolsTable = ({ onPairClick }) => {
   };
 
   return (
-    <div style={{ height: 500 }}>
+    <div style={{ width: "95%", margin: "30px"}}>
       <HotkeysProvider>
         <Table numRows={pairs.length}>
           <Column name="Time" cellRenderer={timestampCellRender} />
