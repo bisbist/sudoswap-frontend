@@ -1,6 +1,7 @@
 import React from "react";
 import { ethers } from "ethers";
-import config from "../config";
+import { provider, contracts } from "../environment";
+
 import { HotkeysProvider } from "@blueprintjs/core";
 import {
   Column,
@@ -10,7 +11,7 @@ import {
 } from "@blueprintjs/table";
 
 import "@blueprintjs/table/lib/css/table.css";
-// import "@blueprintjs/popover2/lib/css/blueprint-popover2.cs";
+import { Interface } from "ethers/lib/utils";
 
 export const Type = {
   TOKEN: "0",
@@ -123,43 +124,159 @@ const PoolsTable = ({ onPairClick }) => {
   };
 
   const spotPriceCellRenderer = (rowIndex, columnIndex) => {
-    const value = getRowValue(rowIndex, columnIndex);
+    const value = ethers.utils.formatEther(getRowValue(rowIndex, columnIndex));
     if (!value) return <Cell></Cell>;
     return (
       <EditableCell
         isFocused
         value={value}
         onCancel={(value) => {
-
           console.error(value);
         }}
         onChange={(value) => {
           console.log(value);
         }}
-        onConfirm={(value) => {
+        onConfirm={async (value) => {
           // create transaction to update spot price
-          console.log(value);
+          const ownerColumnIndex = columns.findIndex((col) => col === "owner");
+          const poolAddressColumnIndex = columns.findIndex(
+            (col) => col === "address"
+          );
+
+          if (ownerColumnIndex >= 0) {
+            const owner = getRowValue(rowIndex, ownerColumnIndex);
+            const poolAddress = getRowValue(rowIndex, poolAddressColumnIndex);
+            await provider.send("eth_requestAccounts");
+            const signer = provider.getSigner();
+            const signerAddress = await signer.getAddress();
+
+            if (owner != signerAddress) {
+              alert(`Please provide correct owner address = ${owner}`);
+            } else {
+              const lssvmpair = contracts.pair(poolAddress, signer);
+              let tnx = await lssvmpair.changeSpotPrice(
+                ethers.utils.parseEther(value)
+              );
+              await tnx.wait();
+            }
+          }
         }}
       />
     );
   };
 
+  const deltaCellRenderer = (rowIndex, columnIndex) => {
+    const value = ethers.utils.formatEther(getRowValue(rowIndex, columnIndex));
+    if (!value) return <Cell></Cell>;
+    return (
+      <EditableCell
+        isFocused
+        value={value}
+        onCancel={(value) => {
+          console.error(value);
+        }}
+        onChange={(value) => {
+          console.log(value);
+        }}
+        onConfirm={async (value) => {
+          // create transaction to update spot price
+          const ownerColumnIndex = columns.findIndex((col) => col === "owner");
+          const poolAddressColumnIndex = columns.findIndex(
+            (col) => col === "address"
+          );
+
+          if (ownerColumnIndex >= 0) {
+            const owner = getRowValue(rowIndex, ownerColumnIndex);
+            const poolAddress = getRowValue(rowIndex, poolAddressColumnIndex);
+            await provider.send("eth_requestAccounts");
+            const signer = provider.getSigner();
+            const signerAddress = await signer.getAddress();
+
+            if (owner != signerAddress) {
+              alert(`Please provide correct owner address = ${owner}`);
+            } else {
+              const lssvmpair = contracts.pair(poolAddress, signer);
+              let tnx = await lssvmpair.changeDelta(
+                ethers.utils.parseEther(value)
+              );
+              await tnx.wait();
+            }
+          }
+        }}
+      />
+    );
+  };
+
+  const ethBalanceCellRenderer = (rowIndex, columnIndex) => {
+    const value = ethers.utils.formatEther(getRowValue(rowIndex, columnIndex));
+    if (!value) return <Cell></Cell>;
+    return <EditableCell isFocused value={value} />;
+  };
+
+  const feeCellRenderer = (rowIndex, columnIndex) => {
+    const value = ethers.utils.formatEther(getRowValue(rowIndex, columnIndex));
+    const poolTypeColumnIndex = columns.findIndex((col) => col === "poolType");
+    const poolType = getRowValue(rowIndex, poolTypeColumnIndex);
+
+    if (!value) return <Cell></Cell>;
+    if (poolType == "2") {
+      return (
+        <EditableCell
+          isFocused
+          value={value}
+          onCancel={(value) => {
+            console.error(value);
+          }}
+          onChange={(value) => {
+            console.log(value);
+          }}
+          onConfirm={async (value) => {
+            // create transaction to update spot price
+            const ownerColumnIndex = columns.findIndex(
+              (col) => col === "owner"
+            );
+            const poolAddressColumnIndex = columns.findIndex(
+              (col) => col === "address"
+            );
+
+            if (ownerColumnIndex >= 0) {
+              const owner = getRowValue(rowIndex, ownerColumnIndex);
+              const poolAddress = getRowValue(rowIndex, poolAddressColumnIndex);
+              await provider.send("eth_requestAccounts");
+              const signer = provider.getSigner();
+              const signerAddress = await signer.getAddress();
+
+              if (owner != signerAddress) {
+                alert(`Please provide correct owner address = ${owner}`);
+              } else {
+                const lssvmpair = contracts.pair(poolAddress, signer);
+                let tnx = await lssvmpair.changeFee(
+                  ethers.utils.parseEther(value)
+                );
+                await tnx.wait();
+              }
+            }
+          }}
+        />
+      );
+    }
+  };
+
   return (
     <div style={{ height: 500 }}>
-
       <HotkeysProvider>
         <Table numRows={pairs.length}>
           <Column name="Time" cellRenderer={timestampCellRender} />
           <Column name="Block" cellRenderer={defaultCellRenderer} />
           <Column name="Address" cellRenderer={defaultCellRenderer} />
           <Column name="Variant" cellRenderer={variantCellRenderer} />
-          <Column name="ETH Balance" cellRenderer={valueCellRenderer} />
+          <Column name="ETH Balance" cellRenderer={ethBalanceCellRenderer} />
           <Column name="Token" cellRenderer={defaultCellRenderer} />
-          <Column name="Token Balance" cellRenderer={valueCellRenderer} />
-          <Column name="Spot Price" cellRenderer={valueCellRenderer} />
-          <Column name="Delta" cellRenderer={valueCellRenderer} />
-          <Column name="Fee" cellRenderer={valueCellRenderer} />
-          <Column name="Type" cellRenderer={defaultCellRenderer} />
+          <Column name="Token Balance" cellRenderer={defaultCellRenderer} />
+          <Column name="Spot Price" cellRenderer={spotPriceCellRenderer} />
+          <Column name="Delta" cellRenderer={deltaCellRenderer} />
+          <Column name="Fee" cellRenderer={feeCellRenderer} />
+          <Column name="Type" cellRenderer={poolTypeCellRenderer} />
           <Column name="NFT" cellRenderer={defaultCellRenderer} />
           <Column name="Owner" cellRenderer={defaultCellRenderer} />
           <Column name="Bonding Curve" cellRenderer={defaultCellRenderer} />
@@ -170,7 +287,7 @@ const PoolsTable = ({ onPairClick }) => {
           <Column name="TxIndex" cellRenderer={defaultCellRenderer} />
           <Column name="TxValue" cellRenderer={valueCellRenderer} />
           <Column name="TxNonce" cellRenderer={defaultCellRenderer} />
-          <Column name="TxGasLimit" cellRenderer={defaultCellRenderer} />
+          <Column name="TxGasLimit" cellRenderer={gweiCellRenderer} />
           <Column name="TxGasPrice" cellRenderer={gweiCellRenderer} />
           <Column name="TxMaxFeePerGas" cellRenderer={gweiCellRenderer} />
           <Column
@@ -181,7 +298,6 @@ const PoolsTable = ({ onPairClick }) => {
       </HotkeysProvider>
     </div>
   );
-
 };
 
 export default PoolsTable;
