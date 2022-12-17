@@ -8,6 +8,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-example}
+    ports:
+      - 27017:27017
     volumes:
       - ${PWD}/data/db:/data/db
     healthcheck:
