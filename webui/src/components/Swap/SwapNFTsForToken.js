@@ -1,6 +1,6 @@
 import React from 'react'
 import { ethers } from 'ethers'
-import { provider, contracts } from '../../environment'
+import { provider, contracts, getDefaultTxnParams } from '../../environment'
 import SwapList from './components/SwapList'
 import config from '../../config'
 
@@ -138,8 +138,7 @@ const SwapNFTsForToken = ({
                         params.tokenRecipient,
                         params.deadline,
                         {
-                            gasLimit: 30000000,
-                            // value: ethers.utils.parseEther(amount),
+                            ...getDefaultTxnParams(),
                         }
                     )
 
