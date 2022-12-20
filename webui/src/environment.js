@@ -1,10 +1,14 @@
 import { ethers } from "ethers";
 import config from "./config.js";
 
-export const provider = new ethers.providers.Web3Provider(
-  window.ethereum,
-  "any"
-);
+export const isDevEnv = process.env.DEV !== undefined;
+
+export const getDefaultTxnParams = () => {
+    // hard code gas limit to prevent gas estimation failure
+    return isDevEnv ? { gasLimit: 3000000 } : {}
+}
+
+export const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
 export const contracts = {
   ERC20(address, signer) {

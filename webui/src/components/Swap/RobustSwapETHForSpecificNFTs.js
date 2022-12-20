@@ -1,7 +1,7 @@
-import React from "react";
-import { ethers } from "ethers";
-import { provider, contracts } from "../../environment";
-import SwapList from "./components/SwapList";
+import React from 'react'
+import { ethers } from 'ethers'
+import { provider, contracts, getDefaultTxnParams } from '../../environment'
+import SwapList from './components/SwapList'
 
 const RobustSwapETHForSpecificNFTs = ({
   router: { name: routerName, createContract: createRouterContract },
@@ -118,7 +118,7 @@ const RobustSwapETHForSpecificNFTs = ({
               params.nftRecipient,
               params.deadline,
               {
-                gasLimit: 30000000,
+                ...getDefaultTxnParams(),
                 value: ethers.utils.parseEther(ethValue),
               }
             );
@@ -133,4 +133,5 @@ const RobustSwapETHForSpecificNFTs = ({
   );
 };
 
-export default RobustSwapETHForSpecificNFTs;
+
+export default RobustSwapETHForSpecificNFTs

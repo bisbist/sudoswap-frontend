@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import config from '../config';
 import AddressInput from "./utils/AddressInput.js"
 import BalanceInput from "./utils/BalanceInput.js"
-import { provider, contracts } from "../environment.js"
+import { provider, contracts, getDefaultTxnParams } from "../environment.js"
 import ArrayInput from './utils/ArrayInput';
 
 const TokenType = {
@@ -284,7 +284,7 @@ const PoolCreator = () => {
                                         ...(params.initialBalance ? {
                                             value: ethers.utils.parseEther(params.initialBalance),
                                         } : {}),
-                                        gasLimit: 3000000,
+                                        ...getDefaultTxnParams(),
                                     }
                                 )
                             } else { // createPairERC20
@@ -300,7 +300,7 @@ const PoolCreator = () => {
                                     params.initialNFTIDs,
                                     ethers.utils.parseEther(params.initialBalance),
                                     {
-                                        gasLimit: 30000000,
+                                        ...getDefaultTxnParams(),
                                     }
                                 ])
                             }

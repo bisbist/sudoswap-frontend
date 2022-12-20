@@ -1,7 +1,7 @@
-import React from "react";
-import { ethers } from "ethers";
-import { provider, contracts } from "../../environment";
-import SwapList from "./components/SwapList";
+import React from 'react'
+import { ethers } from 'ethers'
+import { provider, contracts, getDefaultTxnParams } from '../../environment'
+import SwapList from './components/SwapList'
 
 const RobustSwapERC20ForSpecificNFTs = ({
   router: { name: routerName, createContract: createRouterContract },
@@ -137,8 +137,6 @@ const RobustSwapERC20ForSpecificNFTs = ({
             const erc20 = contracts.ERC20(tokenAddr, signer);
             let txn = await erc20.approve(router.address, params.inputAmount);
             await txn.wait();
-
-            console.log("I'm here...");
             console.log(params);
 
             // Create a swap transaction
@@ -148,7 +146,7 @@ const RobustSwapERC20ForSpecificNFTs = ({
               params.nftRecipient,
               params.deadline,
               {
-                gasLimit: 30000000,
+                ...getDefaultTxnParams(),
               }
             );
 
@@ -162,4 +160,4 @@ const RobustSwapERC20ForSpecificNFTs = ({
   );
 };
 
-export default RobustSwapERC20ForSpecificNFTs;
+export default RobustSwapERC20ForSpecificNFTs

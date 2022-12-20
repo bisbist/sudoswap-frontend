@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import config from '../config';
 import AddressInput from "./utils/AddressInput.js"
 import BalanceInput from "./utils/BalanceInput.js"
-import { contracts, provider } from '../environment';
+import { contracts, getDefaultTxnParams, provider } from '../environment';
 import ArrayInput from './utils/ArrayInput';
 
 
@@ -391,7 +391,7 @@ export default ({
                                                 tokenRecipient,
                                                 deadline,
                                                 {
-                                                    gasLimit: 30000000,
+                                                    ...getDefaultTxnParams(),
                                                 }
                                             )
                                             break
@@ -405,7 +405,7 @@ export default ({
                                                 deadline,
                                                 {
                                                     value: ethers.utils.parseEther(state.tokenAmount),
-                                                    gasLimit: 30000000,
+                                                    ...getDefaultTxnParams(),
                                                 }
                                             )
                                             break
@@ -429,7 +429,7 @@ export default ({
                                         deadline,
                                         {
                                             value: ethers.utils.parseEther(state.tokenAmount),
-                                            gasLimit: 30000000,
+                                            ...getDefaultTxnParams(),
                                         }
                                     )
                                     break

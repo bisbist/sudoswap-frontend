@@ -1,7 +1,7 @@
-import React from "react";
-import { ethers } from "ethers";
-import { provider, contracts } from "../../environment";
-import SwapList from "./components/SwapList";
+import React from 'react'
+import { ethers } from 'ethers'
+import { provider, contracts, getDefaultTxnParams } from '../../environment'
+import SwapList from './components/SwapList'
 
 function SwapERC20ForSpecificNFTs({
   router: { name: routerName, createContract: createRouterContract },
@@ -145,7 +145,7 @@ function SwapERC20ForSpecificNFTs({
               params.nftRecipient,
               params.deadline,
               {
-                gasLimit: 30000000,
+                ...getDefaultTxnParams(),
               }
             );
 

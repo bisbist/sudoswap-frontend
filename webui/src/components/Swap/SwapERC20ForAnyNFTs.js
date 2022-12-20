@@ -1,7 +1,7 @@
-import React from "react";
-import { ethers } from "ethers";
-import { provider, contracts } from "../../environment";
-import SwapList from "./components/SwapList";
+import React from 'react'
+import { ethers } from 'ethers'
+import { provider, contracts, getDefaultTxnParams } from '../../environment'
+import SwapList from './components/SwapList'
 
 const SwapERC20ForAnyNFTs = ({
   router: { name: routerName, createContract: createRouterContract },
@@ -134,7 +134,7 @@ const SwapERC20ForAnyNFTs = ({
               params.nftRecipient,
               params.deadline,
               {
-                gasLimit: 30000000,
+                ...getDefaultTxnParams(),
               }
             );
 
@@ -148,4 +148,4 @@ const SwapERC20ForAnyNFTs = ({
   );
 };
 
-export default SwapERC20ForAnyNFTs;
+export default SwapERC20ForAnyNFTs
