@@ -8,6 +8,9 @@ export const getDefaultTxnParams = () => {
     return isDevEnv ? { gasLimit: 3000000 } : {}
 }
 
+if (window.ethereum === undefined) {
+    alert("Please install metamask!")
+}
 export const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
 
 export const contracts = {
