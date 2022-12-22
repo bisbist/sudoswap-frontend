@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { setConfig } from "./config";
 import Home from "./pages/Home";
 import "@blueprintjs/core/lib/css/blueprint.css";
+import { getApiUrl } from "./environment";
 
 function App() {
   const [initialized, setInitialized] = React.useState(false);
