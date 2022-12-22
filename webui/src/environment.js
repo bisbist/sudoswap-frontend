@@ -8,6 +8,10 @@ export const getDefaultTxnParams = () => {
     return isDevEnv ? { gasLimit: 3000000 } : {}
 }
 
+export const getApiUrl = (path) => {
+    return `https://127.0.0.1:8000${path}`
+}
+
 if (window.ethereum === undefined) {
     alert("Please install metamask!")
 }
