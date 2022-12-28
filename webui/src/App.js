@@ -4,9 +4,8 @@ import { setConfig } from "./config";
 import Home from "./pages/Home";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import PoolCreator from "./components/PoolCreator";
-import NavBar from "./Utils/Navbar";
+import NavBar from "./components/Navbar/Navbar";
 import Swap from "./components/Swap";
-
 
 function App() {
   const [initialized, setInitialized] = React.useState(false);
@@ -22,11 +21,11 @@ function App() {
 
   return initialized ? (
     <BrowserRouter>
-    <NavBar />
+      <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/Pools" element={<PoolCreator />} />
-        <Route path="/Swap" element={<Swap />} />
+        <Route path="/pool" element={<PoolCreator />} />
+        <Route path="/swap" element={<Swap />} />
       </Routes>
     </BrowserRouter>
   ) : null;
