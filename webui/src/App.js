@@ -24,7 +24,7 @@ function App() {
       <NavBar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/pool" element={<PoolCreator />} />
+        <Route path="/pools" element={<PoolCreator />} />
         <Route path="/swap" element={<Swap />} />
       </Routes>
     </BrowserRouter>
